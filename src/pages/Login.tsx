@@ -1,40 +1,34 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 
 function Login () {
-    const [theme, setTheme] = useState<'light' | 'dark'>('light')
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    const [error, setError] = useState('')
+    const navigate = useNavigate()
 
-    useEffect(() => {
-        // Detectar el tema preferido del sistema
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-        const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null
-        const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light')
-        setTheme(initialTheme)
-        document.documentElement.setAttribute('data-theme', initialTheme)
-    }, [])
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault()
+        setError('')
 
-    const toggleTheme = () => {
-        const newTheme = theme === 'light' ? 'dark' : 'light'
-        setTheme(newTheme)
-        document.documentElement.setAttribute('data-theme', newTheme)
-        localStorage.setItem('theme', newTheme)
+        // Obtener usuarios del localStorage
+        const users = JSON.parse(localStorage.getItem('users') || '[]')
+        
+        // Buscar usuario
+        const user = users.find((u: any) => u.username === username && u.password === password)
+        
+        if (user) {
+            // Guardar sesión
+            localStorage.setItem('currentUser', JSON.stringify({ username: user.username }))
+            // Redirigir a home
+            navigate('/')
+        } else {
+            setError('Usuario o contraseña incorrectos')
+        }
     }
 
     return (
         <>  
-            
-            <link rel="stylesheet" href="/src/style.css" />
-            
-            {/* Botón de cambio de tema */}
-            <div className="absolute top-4 right-4">
-                <button
-                    onClick={toggleTheme}
-                    className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition duration-300"
-                    aria-label="Cambiar tema"
-                >
-                    {theme === 'light' ? '🌙' : '☀️'}
-                </button>
-            </div>
-
             <h1 className="text-2xl font-bold mb-18 mt-12 text-center" >
                 TimeLock
             </h1>
@@ -42,28 +36,41 @@ function Login () {
                 INICIO DE SESIÓN
             </p>
 
-            <div className="flex flex-col items-center mt-8">
+            {error && (
+                <div className="text-center mt-4">
+                    <p className="text-red-600 font-medium">{error}</p>
+                </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="flex flex-col items-center mt-8">
                 <p className="font-medium mb-2">Usuario</p>
                 <input
                     type="text"
                     placeholder="Usuario"
-                    className="mb-4 px-4 py-2 rounded-lg w-64 focus:outline-none focus:ring-2 transition duration-300"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                    className="mb-4 px-4 py-2 rounded-lg w-64 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
                 />
                 <p className="font-medium mb-2">Contraseña</p>
                 <input
                     type="password"
                     placeholder="Contraseña"
-                    className="mb-8 px-4 py-2 rounded-lg w-64 focus:outline-none focus:ring-2 transition duration-300"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="mb-8 px-4 py-2 rounded-lg w-64 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
                 />
-                <button className="px-4 py-2 rounded-lg transition duration-300 mb-4"
-                        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
-                        onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
+                <button 
+                    type="submit"
+                    className="px-6 py-2 bg-black text-white rounded-lg transition duration-300 mb-4 hover:bg-gray-800"
+                >
                     Enviar
                 </button>
-            </div>
+            </form>
             <div className="text-center mt-4">
                 <p>
-                    ¿No tienes una cuenta? <a href="/register" className="text-black hover:underline">Regístrate aquí</a>
+                    ¿No tienes una cuenta? <Link to="/register" className="text-black hover:underline">Regístrate aquí</Link>
                 </p>
             </div>
         </>

@@ -1,29 +1,37 @@
 import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 
 function QuickAccess() {
+    const navigate = useNavigate()
     const [menuOpen, setMenuOpen] = useState(false)
+
+    const handleLogout = () => {
+        localStorage.removeItem('currentUser')
+        setMenuOpen(false)
+        navigate('/login')
+    }
     const [calendarOpen, setCalendarOpen] = useState(false)
 
     return (
         <>
             {/* Navbar */}
-            <nav className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 shadow-md">
+            <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
                 <div className="flex items-center justify-between px-4 py-3">
                     {/* Menú Hamburguesa */}
                     <button
                         onClick={() => setMenuOpen(!menuOpen)}
-                        className="w-10 h-10 flex items-center justify-center rounded-full bg-black dark:bg-white transition-colors hover:opacity-80"
+                        className="w-10 h-10 flex items-center justify-center rounded-full bg-black transition-colors hover:opacity-80"
                         aria-label="Menú"
                     >
                         <div className="space-y-1.5">
-                            <span className="block w-5 h-0.5 bg-white dark:bg-black"></span>
-                            <span className="block w-5 h-0.5 bg-white dark:bg-black"></span>
-                            <span className="block w-5 h-0.5 bg-white dark:bg-black"></span>
+                            <span className="block w-5 h-0.5 bg-white"></span>
+                            <span className="block w-5 h-0.5 bg-white"></span>
+                            <span className="block w-5 h-0.5 bg-white"></span>
                         </div>
                     </button>
 
                     {/* Logo/Título */}
-                    <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    <h1 className="text-lg font-semibold text-gray-900">
                         TimeLock
                     </h1>
 
@@ -34,7 +42,7 @@ function QuickAccess() {
                         aria-label="Calendario"
                     >
                         <svg
-                            className="w-7 h-7 text-gray-900 dark:text-white"
+                            className="w-7 h-7 text-gray-900"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -58,13 +66,13 @@ function QuickAccess() {
                     ></div>
 
                     {/* Sidebar */}
-                    <div className="fixed top-0 left-0 h-full w-64 bg-white dark:bg-gray-800 shadow-lg z-50 transform transition-transform duration-300">
+                    <div className="fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 transform transition-transform duration-300">
                         <div className="p-6">
                             <div className="flex justify-between items-center mb-8">
-                                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Menú</h2>
+                                <h2 className="text-xl font-bold text-gray-900">Menú</h2>
                                 <button
                                     onClick={() => setMenuOpen(false)}
-                                    className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                                    className="text-gray-600 hover:text-gray-900"
                                 >
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -74,31 +82,40 @@ function QuickAccess() {
                             
                             <ul className="space-y-4">
                                 <li>
-                                    <a href="/" className="block py-2 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white transition-colors">
+                                    <Link to="/" className="block py-2 px-4 rounded-lg hover:bg-gray-100 text-gray-900 transition-colors">
                                         Inicio
-                                    </a>
+                                    </Link>
                                 </li>
                                 <li>
-                                    <a href="/login" className="block py-2 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white transition-colors">
-                                        Iniciar Sesión
-                                    </a>
+                                    <Link to="/tienda" className="block py-2 px-4 rounded-lg hover:bg-gray-100 text-gray-900 transition-colors">
+                                        Tienda de Tokens
+                                    </Link>
                                 </li>
                                 <li>
-                                    <a href="/register" className="block py-2 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white transition-colors">
-                                        Registrarse
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/profile" className="block py-2 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white transition-colors">
+                                    <Link to="/profile" className="block py-2 px-4 rounded-lg hover:bg-gray-100 text-gray-900 transition-colors">
                                         Perfil
-                                    </a>
+                                    </Link>
                                 </li>
                                 <li>
-                                    <a href="/settings" className="block py-2 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white transition-colors">
+                                    <Link to="/settings" className="block py-2 px-4 rounded-lg hover:bg-gray-100 text-gray-900 transition-colors">
                                         Configuración
-                                    </a>
+                                    </Link>
                                 </li>
                             </ul>
+
+                            {/* Separador */}
+                            <div className="my-4 border-t border-gray-200"></div>
+
+                            {/* Cerrar sesión */}
+                            <button
+                                onClick={handleLogout}
+                                className="w-full flex items-center gap-3 py-3 px-4 rounded-lg hover:bg-red-50 text-red-600 transition-colors"
+                            >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                                <span className="font-medium">Cerrar sesión</span>
+                            </button>
                         </div>
                     </div>
                 </>
@@ -114,13 +131,13 @@ function QuickAccess() {
                     ></div>
 
                     {/* Modal */}
-                    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-lg shadow-2xl z-50 w-11/12 max-w-md">
+                    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-2xl z-50 w-11/12 max-w-md">
                         <div className="p-6">
                             <div className="flex justify-between items-center mb-4">
-                                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Calendario</h2>
+                                <h2 className="text-xl font-bold text-gray-900">Calendario</h2>
                                 <button
                                     onClick={() => setCalendarOpen(false)}
-                                    className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                                    className="text-gray-600 hover:text-gray-900"
                                 >
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -131,13 +148,13 @@ function QuickAccess() {
                             {/* Vista simple de calendario */}
                             <div className="space-y-4">
                                 <div className="text-center">
-                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
                                         Febrero 2026
                                     </h3>
                                 </div>
 
                                 {/* Días de la semana */}
-                                <div className="grid grid-cols-7 gap-2 text-center text-sm font-medium text-gray-600 dark:text-gray-400">
+                                <div className="grid grid-cols-7 gap-2 text-center text-sm font-medium text-gray-600">
                                     <div>Dom</div>
                                     <div>Lun</div>
                                     <div>Mar</div>
@@ -152,10 +169,10 @@ function QuickAccess() {
                                     {Array.from({ length: 28 }, (_, i) => (
                                         <button
                                             key={i}
-                                            className={`p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
+                                            className={`p-2 rounded-lg hover:bg-gray-100 transition-colors ${
                                                 i + 1 === 24
                                                     ? 'bg-blue-500 text-white hover:bg-blue-600'
-                                                    : 'text-gray-900 dark:text-white'
+                                                    : 'text-gray-900'
                                             }`}
                                         >
                                             {i + 1}
@@ -163,8 +180,8 @@ function QuickAccess() {
                                     ))}
                                 </div>
 
-                                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                                    <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
+                                <div className="pt-4 border-t border-gray-200">
+                                    <p className="text-sm text-gray-600 text-center">
                                         Hoy: 24 de Febrero, 2026
                                     </p>
                                 </div>
