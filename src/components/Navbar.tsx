@@ -5,15 +5,15 @@ function Navbar() {
 
     return (
         <nav className="fixed bottom-6 left-0 right-0 z-50 flex justify-center px-6">
-            <div className="flex items-center justify-around gap-4 px-8 bg-gray-900 rounded-full shadow-lg shadow-black/20">
+            <div className="flex items-center justify-around gap-4 px-8 bg-gradient-to-r from-[#0a1929] to-[#131F37] rounded-full shadow-lg shadow-black/20">
                 {/* Home */}
                 <button
                     onClick={() => navigate('/')}
-                    className="w-14 h-14 flex items-center justify-center rounded-lg hover:bg-gray-800 transition-colors"
+                    className="w-14 h-14 flex items-center justify-center rounded-lg hover:bg-[#1E293B] transition-colors"
                     aria-label="Inicio"
                 >
                     <svg
-                        className="w-7 h-7 text-white"
+                        className="w-7 h-7 text-[#4B6FA7]"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -29,11 +29,11 @@ function Navbar() {
 
                 {/* Proceso/Estadísticas */}
                 <button
-                    className="w-14 h-14 flex items-center justify-center rounded-lg hover:bg-gray-800 transition-colors"
+                    className="w-14 h-14 flex items-center justify-center rounded-lg hover:bg-[#1E293B] transition-colors"
                     aria-label="Proceso"
                 >
                     <svg
-                        className="w-7 h-7 text-white"
+                        className="w-7 h-7 text-[#4B6FA7]"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -51,11 +51,11 @@ function Navbar() {
                 {/* Configuración */}
                 <button
                     onClick={() => navigate('/settings')}
-                    className="w-14 h-14 flex items-center justify-center rounded-lg hover:bg-gray-800 transition-colors"
+                    className="w-14 h-14 flex items-center justify-center rounded-lg hover:bg-[#1E293B] transition-colors"
                     aria-label="Configuración"
                 >
                     <svg
-                        className="w-7 h-7 text-white"
+                        className="w-7 h-7 text-[#4B6FA7]"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
