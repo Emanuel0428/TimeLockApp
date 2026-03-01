@@ -10,6 +10,7 @@ import WalkingUse from './pages/WalkingUse'
 import StationaryLife from './pages/StationaryLife'
 import UnlockAdvance from './pages/UnlockAdvance'
 import ContinuousUse from './pages/ContinuousUse'
+import TokenShop from './pages/TokenShop'
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
       <Route path="/stationary-life" element={<StationaryLife />} />
       <Route path="/unlock-advance" element={<UnlockAdvance />} />
       <Route path="/continuous-use" element={<ContinuousUse />} />
+      <Route path="/token-shop" element={<TokenShop />} />
     </Routes>
   )
 }
