@@ -22,3 +22,19 @@ body {
 .animate-shine {
   animation: shine 4s linear infinite;
 }
+
+@keyframes pulseHighlight {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(75, 111, 167, 0.12);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 6px rgba(75, 111, 167, 0.06);
+  }
+}
+
+.animate-pulse-highlight {
+  animation: pulseHighlight 2.2s ease-in-out infinite;
+}
