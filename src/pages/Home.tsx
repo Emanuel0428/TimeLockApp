@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Smartphone, BarChart3, Footprints, Armchair, Unlock, Timer } from "lucide-react";
 import QuickAccess from "../components/QuickAccess";
 import Navbar from "../components/Navbar";
 
 const Home = () => {
+    const navigate = useNavigate();
     const [currentDate] = useState(new Date(2026, 1, 6)); // 6 febrero, 2026
 
     const formatDate = (date: Date) => {
@@ -41,7 +43,9 @@ const Home = () => {
                     {/* Grid de estadísticas */}
                     <div className="grid grid-cols-2 gap-3 px-2">
                         {/* Recogidas */}
-                        <div className="bg-linear-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-5 md:p-6 flex flex-col justify-between aspect-square shadow-lg border border-white/10 backdrop-blur-sm relative overflow-hidden group">
+                        <button
+                            onClick={() => navigate('/pickups')}
+                            className="bg-linear-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-5 md:p-6 flex flex-col justify-between aspect-square shadow-lg border border-white/10 backdrop-blur-sm relative overflow-hidden group hover:scale-105 transition-transform active:scale-95 cursor-pointer">
                             <div className="flex justify-center items-center grow">
                                 <Smartphone className="w-12 h-12 md:w-14 md:h-14 text-[#4B6FA7]" strokeWidth={1.5} />
                             </div>
@@ -50,10 +54,12 @@ const Home = () => {
                                 <p className="text-[#F8FAFC] text-lg md:text-xl font-bold">1 Tiempo</p>
                             </div>
                             <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent" style={{animation: 'shine 4s infinite'}}></div>
-                        </div>
+                        </button>
 
                         {/* Uso Promedio */}
-                        <div className="bg-linear-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-5 md:p-6 flex flex-col justify-between aspect-square shadow-lg border border-white/10 backdrop-blur-sm relative overflow-hidden group">
+                        <button
+                            onClick={() => navigate('/average-use')}
+                            className="bg-linear-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-5 md:p-6 flex flex-col justify-between aspect-square shadow-lg border border-white/10 backdrop-blur-sm relative overflow-hidden group hover:scale-105 transition-transform active:scale-95 cursor-pointer">
                             <div className="flex justify-center items-center grow">
                                 <BarChart3 className="w-12 h-12 md:w-14 md:h-14 text-[#4B6FA7]" strokeWidth={1.5} />
                             </div>
@@ -62,10 +68,12 @@ const Home = () => {
                                 <p className="text-[#F8FAFC] text-lg md:text-xl font-bold">1 M</p>
                             </div>
                             <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent" style={{animation: 'shine 4s infinite'}}></div>
-                        </div>
+                        </button>
 
                         {/* Mientras Caminas */}
-                        <div className="bg-linear-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-5 md:p-6 flex flex-col justify-between aspect-square shadow-lg border border-white/10 backdrop-blur-sm relative overflow-hidden group">
+                        <button
+                            onClick={() => navigate('/walking-use')}
+                            className="bg-linear-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-5 md:p-6 flex flex-col justify-between aspect-square shadow-lg border border-white/10 backdrop-blur-sm relative overflow-hidden group hover:scale-105 transition-transform active:scale-95 cursor-pointer">
                             <div className="flex justify-center items-center grow">
                                 <Footprints className="w-12 h-12 md:w-14 md:h-14 text-[#4B6FA7]" strokeWidth={1.5} />
                             </div>
@@ -74,10 +82,12 @@ const Home = () => {
                                 <p className="text-[#F8FAFC] text-lg md:text-xl font-bold">37 M</p>
                             </div>
                             <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent" style={{animation: 'shine 4s infinite'}}></div>
-                        </div>
+                        </button>
 
                         {/* Vida estacionaria */}
-                        <div className="bg-linear-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-5 md:p-6 flex flex-col justify-between aspect-square shadow-lg border border-white/10 backdrop-blur-sm relative overflow-hidden group">
+                        <button
+                            onClick={() => navigate('/stationary-life')}
+                            className="bg-linear-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-5 md:p-6 flex flex-col justify-between aspect-square shadow-lg border border-white/10 backdrop-blur-sm relative overflow-hidden group hover:scale-105 transition-transform active:scale-95 cursor-pointer">
                             <div className="flex justify-center items-center grow">
                                 <Armchair className="w-12 h-12 md:w-14 md:h-14 text-[#4B6FA7]" strokeWidth={1.5} />
                             </div>
@@ -86,10 +96,12 @@ const Home = () => {
                                 <p className="text-[#F8FAFC] text-lg md:text-xl font-bold">5 h 57 M</p>
                             </div>
                             <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent" style={{animation: 'shine 4s infinite'}}></div>
-                        </div>
+                        </button>
 
                         {/* Adelantar Bloqueos */}
-                        <div className="bg-linear-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-5 md:p-6 flex flex-col justify-between aspect-square shadow-lg border border-white/10 backdrop-blur-sm relative overflow-hidden group">
+                        <button
+                            onClick={() => navigate('/unlock-advance')}
+                            className="bg-linear-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-5 md:p-6 flex flex-col justify-between aspect-square shadow-lg border border-white/10 backdrop-blur-sm relative overflow-hidden group hover:scale-105 transition-transform active:scale-95 cursor-pointer">
                             <div className="flex justify-center items-center grow">
                                 <Unlock className="w-12 h-12 md:w-14 md:h-14 text-[#4B6FA7]" strokeWidth={1.5} />
                             </div>
@@ -98,10 +110,12 @@ const Home = () => {
                                 <p className="text-[#F8FAFC] text-[9px] md:text-[10px] leading-tight">Usa tokens para adelantar tu proceso</p>
                             </div>
                             <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent" style={{animation: 'shine 4s infinite'}}></div>
-                        </div>
+                        </button>
 
                         {/* Uso continuo */}
-                        <div className="bg-linear-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-5 md:p-6 flex flex-col justify-between aspect-square shadow-lg border border-white/10 backdrop-blur-sm relative overflow-hidden group">
+                        <button
+                            onClick={() => navigate('/continuous-use')}
+                            className="bg-linear-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-5 md:p-6 flex flex-col justify-between aspect-square shadow-lg border border-white/10 backdrop-blur-sm relative overflow-hidden group hover:scale-105 transition-transform active:scale-95 cursor-pointer">
                             <div className="flex justify-center items-center grow">
                                 <Timer className="w-12 h-12 md:w-14 md:h-14 text-[#4B6FA7]" strokeWidth={1.5} />
                             </div>
@@ -110,7 +124,7 @@ const Home = () => {
                                 <p className="text-[#F8FAFC] text-lg md:text-xl font-bold">2 H 33 M</p>
                             </div>
                             <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent" style={{animation: 'shine 4s infinite'}}></div>
-                        </div>
+                        </button>
                     </div>
                 </div>
             </main>
