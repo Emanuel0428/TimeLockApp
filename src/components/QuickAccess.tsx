@@ -15,7 +15,7 @@ function QuickAccess() {
     return (
         <>
             {/* Navbar */}
-            <nav className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-[#131F37] to-[#1a2a3a] shadow-md">
+            <nav className="fixed top-0 left-0 right-0 z-50 bg-linear-to-r from-[#131F37] to-[#1a2a3a] shadow-md">
                 <div className="flex items-center justify-between px-4 py-3 relative">
                     {/* Menú Hamburguesa */}
                     <button
@@ -66,7 +66,7 @@ function QuickAccess() {
                     ></div>
 
                     {/* Sidebar */}
-                    <div className="fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-[#1E293B] to-[#131F37] shadow-lg z-50 transform transition-transform duration-300">
+                    <div className="fixed top-0 left-0 h-full w-64 bg-linear-to-b from-[#1E293B] to-[#131F37] shadow-lg z-50 transform transition-transform duration-300">
                         <div className="p-6">
                             <div className="flex justify-between items-center mb-8">
                                 <h2 className="text-xl font-bold text-[#F8FAFC]">Menú</h2>
@@ -131,7 +131,7 @@ function QuickAccess() {
                     ></div>
 
                     {/* Modal */}
-                    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gradient-to-b from-[#1E293B] to-[#131F37] rounded-lg shadow-2xl z-50 w-11/12 max-w-md border border-[#2D3E52]">
+                    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-linear-to-b from-[#1E293B] to-[#131F37] rounded-lg shadow-2xl z-50 w-11/12 max-w-md border border-[#2D3E52]">
                         <div className="p-6">
                             <div className="flex justify-between items-center mb-4">
                                 <h2 className="text-xl font-bold text-[#F8FAFC]">Calendario</h2>
