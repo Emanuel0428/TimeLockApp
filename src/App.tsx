@@ -27,7 +27,6 @@ function App() {
       <Route path="/unlock-advance" element={<UnlockAdvance />} />
       <Route path="/continuous-use" element={<ContinuousUse />} />
       <Route path="/token-shop" element={<TokenShop />} />
-      <Route path="/tienda" element={<TokenShop />} />
     </Routes>
   )
 }
