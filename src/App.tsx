@@ -12,6 +12,7 @@ import StationaryLife from "./pages/StationaryLife";
 import UnlockAdvance from "./pages/UnlockAdvance";
 import ContinuousUse from "./pages/ContinuousUse";
 import TokenShop from "./pages/TokenShop";
+import Notifications from "./pages/Notifications";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/unlock-advance" element={<UnlockAdvance />} />
         <Route path="/continuous-use" element={<ContinuousUse />} />
         <Route path="/token-shop" element={<TokenShop />} />
+        <Route path="/notifications" element={<Notifications />} />
       </Routes>
     </MetricsProvider>
   );
