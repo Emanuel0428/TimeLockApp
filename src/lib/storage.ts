@@ -13,6 +13,7 @@ export interface DailyMetrics {
   date: string; // YYYY-MM-DD
   pickups: number;
   screenActiveMs: number;
+  appOpenMs: number;
   continuousMaxMs: number;
   stationaryMs: number;
   walkingMs: number;
@@ -50,6 +51,7 @@ function defaultMetrics(date: string): DailyMetrics {
     date,
     pickups: 0,
     screenActiveMs: 0,
+    appOpenMs: 0,
     continuousMaxMs: 0,
     stationaryMs: 0,
     walkingMs: 0,

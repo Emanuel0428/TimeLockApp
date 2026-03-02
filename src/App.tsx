@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Settings from "./pages/Settings";
+import Blocklists from "./pages/Blocklists";
 import Focus from "./pages/Focus";
 import Pickups from "./pages/Pickups";
 import AverageUse from "./pages/AverageUse";
@@ -13,7 +14,6 @@ import UnlockAdvance from "./pages/UnlockAdvance";
 import ContinuousUse from "./pages/ContinuousUse";
 import TokenShop from "./pages/TokenShop";
 import Notifications from "./pages/Notifications";
-import Blocklists from "./pages/Blocklists";
 
 function App() {
   return (

@@ -23,6 +23,7 @@ export interface NotificationItem {
 
 export interface TokenLedgerEntry {
   id: string;
+  type: "earn" | "purchase" | "spend";
   amount: number;
   reason: string;
   timestamp: number;
@@ -68,10 +69,4 @@ export const defaultSettings: SettingsModel = {
   continuousUseLockMinutes: 30,
 };
 
-export interface DailyMetrics {
-  date: string; // YYYY-MM-DD
-  appOpenMs: number;
-  appVisibleMs: number;
-  pickups: number;
-  focusSessionsCompleted: number;
-}
+// DailyMetrics is defined in lib/storage.ts (canonical location)
