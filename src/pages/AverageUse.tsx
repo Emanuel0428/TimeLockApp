@@ -2,14 +2,16 @@ import { useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, BarChart3, Share2, X } from "lucide-react";
 import Navbar from "../components/Navbar";
-import MiniChart from "../components/MiniChart";
 import DonutChart from "../components/DonutChart";
 import StackedBarChart from "../components/StackedBarChart";
+import MetricsBarChart from "../components/MetricsBarChart";
 import { useMetrics } from "../context/MetricsContext";
-import { formatDateKey, formatMs, getMetrics } from "../lib/storage";
-import { storage } from "../core/storage/userStorage";
+import { formatDateKey, formatMs, type DailyMetrics } from "../lib/storage";
+import { useMetricsChart, useWeekStats } from "../hooks/useMetricsChart";
+import { type TabType, formatDateDisplay, dayLabels } from "../lib/dateHelpers";
 
-type TabType = "Día" | "Semana" | "Mes" | "Año";
+const screenActiveExtractor = (m: DailyMetrics) => m.screenActiveMs / 3600000;
+const screenActiveMsExtractor = (m: DailyMetrics) => m.screenActiveMs;
 
 const AverageUse = () => {
   const navigate = useNavigate();
@@ -20,24 +22,6 @@ const AverageUse = () => {
   const dateKey = formatDateKey(currentDate);
   const isToday = dateKey === formatDateKey(new Date());
   const dayMetrics = isToday ? todayMetrics : getMetricsForDate(dateKey);
-
-  // Get or update historical max
-  const maxHistorical = useMemo(() => {
-    const stored = storage.get<number>("maxDailyHoursHistorical", 0);
-    const todayHours = dayMetrics.screenActiveMs / 3600000;
-    if (todayHours > stored) {
-      storage.set("maxDailyHoursHistorical", todayHours);
-      return todayHours;
-    }
-    return Math.max(stored, 1); // At least 1h for the scale
-  }, [dayMetrics.screenActiveMs]);
-
-  const formatDate = (date: Date) => {
-    const day = date.getDate();
-    const month = date.toLocaleString("es-ES", { month: "long" });
-    const dayName = date.toLocaleDateString("es-ES", { weekday: "long" });
-    return `${day} ${month}, ${dayName.charAt(0).toUpperCase() + dayName.slice(1)}`;
-  };
 
   const prevDay = useCallback(() => {
     setCurrentDate((d) => {
@@ -54,124 +38,25 @@ const AverageUse = () => {
     });
   }, []);
 
-  // ─── Chart Data by Tab ──────────────────────────────────────────────
-  const chartData = useMemo(() => {
-    if (activeTab === "Día") {
-      // Hourly breakdown (simulated: we don't have hourly data, show daily total spread)
-      const hours = Array.from({ length: 24 }, (_, i) => i);
-      const totalMs = dayMetrics.screenActiveMs;
-      // Simple distribution: assume uniform usage across active hours (8-22)
-      const activeHours = hours.filter((h) => h >= 8 && h <= 22);
-      const perHourMs = totalMs / Math.max(1, activeHours.length);
-      const values = hours.map((h) =>
-        activeHours.includes(h) ? perHourMs / 3600000 : 0,
-      );
-      return {
-        labels: hours.map((h) => (h % 4 === 0 ? `${h}h` : "")),
-        values,
-        maxY: maxHistorical,
-      };
-    }
-
-    if (activeTab === "Semana") {
-      const dow = currentDate.getDay();
-      const monday = new Date(currentDate);
-      monday.setDate(monday.getDate() - ((dow + 6) % 7));
-      const labels = ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"];
-      const values = labels.map((_, i) => {
-        const d = new Date(monday);
-        d.setDate(d.getDate() + i);
-        const k = formatDateKey(d);
-        const m =
-          k === formatDateKey(new Date()) ? todayMetrics : getMetricsForDate(k);
-        return m.screenActiveMs / 3600000;
-      });
-      return { labels, values, maxY: maxHistorical };
-    }
-
-    if (activeTab === "Mes") {
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth();
-      const lastDay = new Date(year, month + 1, 0);
-      const totalDays = lastDay.getDate();
-      const weeksCount = Math.ceil(totalDays / 7);
-      const labels: string[] = [];
-      const values: number[] = [];
-
-      for (let w = 0; w < weeksCount; w++) {
-        labels.push(`Sem ${w + 1}`);
-        let weekTotal = 0;
-        let weekDays = 0;
-        for (let d = w * 7; d < Math.min((w + 1) * 7, totalDays); d++) {
-          const date = new Date(year, month, d + 1);
-          const k = formatDateKey(date);
-          const m =
-            k === formatDateKey(new Date()) ? todayMetrics : getMetrics(k);
-          weekTotal += m.screenActiveMs / 3600000;
-          weekDays++;
-        }
-        values.push(weekDays > 0 ? weekTotal / weekDays : 0);
-      }
-      return { labels, values, maxY: maxHistorical };
-    }
-
-    // Año
-    const year = currentDate.getFullYear();
-    const monthLabels = [
-      "Ene",
-      "Feb",
-      "Mar",
-      "Abr",
-      "May",
-      "Jun",
-      "Jul",
-      "Ago",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dic",
-    ];
-    const values = monthLabels.map((_, monthIdx) => {
-      const daysInMonth = new Date(year, monthIdx + 1, 0).getDate();
-      let total = 0;
-      for (let d = 1; d <= daysInMonth; d++) {
-        const date = new Date(year, monthIdx, d);
-        const k = formatDateKey(date);
-        const m = getMetrics(k);
-        total += m.screenActiveMs / 3600000;
-      }
-      return daysInMonth > 0 ? total / daysInMonth : 0;
-    });
-    return { labels: monthLabels, values, maxY: maxHistorical };
-  }, [
-    activeTab,
+  // ─── Chart Data via shared hook ───────────────────────────────────
+  const chartData = useMetricsChart({
     currentDate,
-    dayMetrics,
-    todayMetrics,
-    getMetricsForDate,
-    maxHistorical,
-  ]);
+    activeTab,
+    metricExtractor: screenActiveExtractor,
+    maxYStorageKey: "maxDailyHoursHistorical",
+    defaultMaxY: 1,
+  });
 
-  // Stats for the week view (used in summary card)
-  const weekStats = useMemo(() => {
-    const dow = currentDate.getDay();
-    const monday = new Date(currentDate);
-    monday.setDate(monday.getDate() - ((dow + 6) % 7));
-    const weekData = Array.from({ length: 7 }, (_, i) => {
-      const d = new Date(monday);
-      d.setDate(d.getDate() + i);
-      const k = formatDateKey(d);
-      const m =
-        k === formatDateKey(new Date()) ? todayMetrics : getMetricsForDate(k);
-      return m.screenActiveMs;
-    });
-    const weekTotal = weekData.reduce((s, v) => s + v, 0);
-    const nonZero = weekData.filter((v) => v > 0);
-    const avg = nonZero.length > 0 ? Math.round(weekTotal / nonZero.length) : 0;
-    const minVal = nonZero.length > 0 ? Math.min(...nonZero) : 0;
-    const maxVal = nonZero.length > 0 ? Math.max(...nonZero) : 0;
-    return { weekTotal, avg, minVal, maxVal };
-  }, [currentDate, todayMetrics, getMetricsForDate]);
+  // ─── Week stats ───────────────────────────────────────────────────
+  const weekStats = useWeekStats(currentDate, screenActiveMsExtractor);
+
+  // ─── Caption by tab ───────────────────────────────────────────────
+  const caption = useMemo(() => {
+    if (activeTab === "Día") return "Horas de uso por hora del día";
+    if (activeTab === "Semana") return "Horas de uso por día de la semana";
+    if (activeTab === "Mes") return "Promedio semanal de horas de uso";
+    return "Promedio mensual de horas de uso";
+  }, [activeTab]);
 
   // ─── Donut: today's time distribution ─────────────────────────────
   const donutSegments = useMemo(() => {
@@ -204,10 +89,9 @@ const AverageUse = () => {
     const dow = currentDate.getDay();
     const monday = new Date(currentDate);
     monday.setDate(monday.getDate() - ((dow + 6) % 7));
-    const labels = ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"];
     const screenVals: number[] = [];
     const focusVals: number[] = [];
-    labels.forEach((_, i) => {
+    dayLabels.forEach((_, i) => {
       const d = new Date(monday);
       d.setDate(d.getDate() + i);
       const k = formatDateKey(d);
@@ -218,7 +102,7 @@ const AverageUse = () => {
       focusVals.push(focusMs / 3600000);
     });
     return {
-      labels,
+      labels: [...dayLabels],
       series: [
         { name: "Pantalla", values: screenVals, color: "#4B6FA7" },
         { name: "Enfoque", values: focusVals, color: "#22D3EE" },
@@ -277,7 +161,7 @@ const AverageUse = () => {
               </svg>
             </button>
             <h2 className="text-sm font-medium text-[#F8FAFC]">
-              {formatDate(currentDate)}
+              {formatDateDisplay(currentDate)}
             </h2>
             <button
               onClick={nextDay}
@@ -316,28 +200,15 @@ const AverageUse = () => {
             ))}
           </div>
 
-          {/* Gráfico SVG */}
-          <div className="bg-linear-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-4 mb-6 border border-white/10">
-            <MiniChart
-              labels={chartData.labels}
-              values={chartData.values}
-              maxY={chartData.maxY}
-              color="#4B6FA7"
-              height={220}
-              barMode={activeTab === "Semana" || activeTab === "Mes"}
-            />
-            <div className="text-center mt-2 pt-3 border-t border-white/10">
-              <p className="text-xs text-[#94A3B8]">
-                {activeTab === "Día" && "Horas de uso por hora del día"}
-                {activeTab === "Semana" && "Horas de uso por día de la semana"}
-                {activeTab === "Mes" && "Promedio semanal de horas de uso"}
-                {activeTab === "Año" && "Promedio mensual de horas de uso"}
-              </p>
-              <p className="text-[10px] text-[#64748B] mt-1">
-                Eje Y máx: {chartData.maxY.toFixed(1)}h (máximo histórico)
-              </p>
-            </div>
-          </div>
+          {/* Gráfico via shared component */}
+          <MetricsBarChart
+            labels={chartData.labels}
+            values={chartData.values}
+            maxY={chartData.maxY}
+            yUnit="h"
+            caption={caption}
+            activeTab={activeTab}
+          />
 
           {/* Estadísticas */}
           <div className="bg-linear-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-6 mb-6 border border-white/10">
@@ -413,7 +284,7 @@ const AverageUse = () => {
             <StackedBarChart
               labels={stackedWeekData.labels}
               series={stackedWeekData.series}
-              maxY={maxHistorical}
+              maxY={chartData.maxY}
               height={200}
             />
           </div>
