@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ChevronLeft, Bell, BellRing, Check, Trash2 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import { NotificationService } from "../core/notifications/NotificationService";
-import { NotificationItem } from "../core/models";
+import type { NotificationItem } from "../core/models";
 
 const Notifications = () => {
   const navigate = useNavigate();
@@ -17,12 +17,6 @@ const Notifications = () => {
 
   const loadNotifications = () => {
     setNotifications(NotificationService.getHistory());
-  };
-
-  const handleMarkAsRead = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    NotificationService.markAsRead(id);
-    loadNotifications();
   };
 
   const handleMarkAllAsRead = () => {
