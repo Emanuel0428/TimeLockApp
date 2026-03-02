@@ -1,4 +1,4 @@
-import { NotificationItem, NotificationType } from "../models";
+import type { NotificationItem, NotificationType } from "../models";
 import { storage, generateId } from "../storage/userStorage";
 
 const NOTIFICATIONS_KEY = "notifications_history";

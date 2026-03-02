@@ -2,18 +2,35 @@ import { useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, BarChart3, Share2, X } from "lucide-react";
 import Navbar from "../components/Navbar";
+import MiniChart from "../components/MiniChart";
+import DonutChart from "../components/DonutChart";
+import StackedBarChart from "../components/StackedBarChart";
 import { useMetrics } from "../context/MetricsContext";
-import { formatDateKey, formatMs } from "../lib/storage";
+import { formatDateKey, formatMs, getMetrics } from "../lib/storage";
+import { storage } from "../core/storage/userStorage";
+
+type TabType = "Día" | "Semana" | "Mes" | "Año";
 
 const AverageUse = () => {
   const navigate = useNavigate();
   const { todayMetrics, getMetricsForDate } = useMetrics();
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [activeTab, setActiveTab] = useState("Semana");
+  const [activeTab, setActiveTab] = useState<TabType>("Semana");
 
   const dateKey = formatDateKey(currentDate);
   const isToday = dateKey === formatDateKey(new Date());
   const dayMetrics = isToday ? todayMetrics : getMetricsForDate(dateKey);
+
+  // Get or update historical max
+  const maxHistorical = useMemo(() => {
+    const stored = storage.get<number>("maxDailyHoursHistorical", 0);
+    const todayHours = dayMetrics.screenActiveMs / 3600000;
+    if (todayHours > stored) {
+      storage.set("maxDailyHoursHistorical", todayHours);
+      return todayHours;
+    }
+    return Math.max(stored, 1); // At least 1h for the scale
+  }, [dayMetrics.screenActiveMs]);
 
   const formatDate = (date: Date) => {
     const day = date.getDate();
@@ -37,30 +54,177 @@ const AverageUse = () => {
     });
   }, []);
 
-  // Build week data
-  const weekData = useMemo(() => {
+  // ─── Chart Data by Tab ──────────────────────────────────────────────
+  const chartData = useMemo(() => {
+    if (activeTab === "Día") {
+      // Hourly breakdown (simulated: we don't have hourly data, show daily total spread)
+      const hours = Array.from({ length: 24 }, (_, i) => i);
+      const totalMs = dayMetrics.screenActiveMs;
+      // Simple distribution: assume uniform usage across active hours (8-22)
+      const activeHours = hours.filter((h) => h >= 8 && h <= 22);
+      const perHourMs = totalMs / Math.max(1, activeHours.length);
+      const values = hours.map((h) =>
+        activeHours.includes(h) ? perHourMs / 3600000 : 0,
+      );
+      return {
+        labels: hours.map((h) => (h % 4 === 0 ? `${h}h` : "")),
+        values,
+        maxY: maxHistorical,
+      };
+    }
+
+    if (activeTab === "Semana") {
+      const dow = currentDate.getDay();
+      const monday = new Date(currentDate);
+      monday.setDate(monday.getDate() - ((dow + 6) % 7));
+      const labels = ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"];
+      const values = labels.map((_, i) => {
+        const d = new Date(monday);
+        d.setDate(d.getDate() + i);
+        const k = formatDateKey(d);
+        const m =
+          k === formatDateKey(new Date()) ? todayMetrics : getMetricsForDate(k);
+        return m.screenActiveMs / 3600000;
+      });
+      return { labels, values, maxY: maxHistorical };
+    }
+
+    if (activeTab === "Mes") {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      const lastDay = new Date(year, month + 1, 0);
+      const totalDays = lastDay.getDate();
+      const weeksCount = Math.ceil(totalDays / 7);
+      const labels: string[] = [];
+      const values: number[] = [];
+
+      for (let w = 0; w < weeksCount; w++) {
+        labels.push(`Sem ${w + 1}`);
+        let weekTotal = 0;
+        let weekDays = 0;
+        for (let d = w * 7; d < Math.min((w + 1) * 7, totalDays); d++) {
+          const date = new Date(year, month, d + 1);
+          const k = formatDateKey(date);
+          const m =
+            k === formatDateKey(new Date()) ? todayMetrics : getMetrics(k);
+          weekTotal += m.screenActiveMs / 3600000;
+          weekDays++;
+        }
+        values.push(weekDays > 0 ? weekTotal / weekDays : 0);
+      }
+      return { labels, values, maxY: maxHistorical };
+    }
+
+    // Año
+    const year = currentDate.getFullYear();
+    const monthLabels = [
+      "Ene",
+      "Feb",
+      "Mar",
+      "Abr",
+      "May",
+      "Jun",
+      "Jul",
+      "Ago",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dic",
+    ];
+    const values = monthLabels.map((_, monthIdx) => {
+      const daysInMonth = new Date(year, monthIdx + 1, 0).getDate();
+      let total = 0;
+      for (let d = 1; d <= daysInMonth; d++) {
+        const date = new Date(year, monthIdx, d);
+        const k = formatDateKey(date);
+        const m = getMetrics(k);
+        total += m.screenActiveMs / 3600000;
+      }
+      return daysInMonth > 0 ? total / daysInMonth : 0;
+    });
+    return { labels: monthLabels, values, maxY: maxHistorical };
+  }, [
+    activeTab,
+    currentDate,
+    dayMetrics,
+    todayMetrics,
+    getMetricsForDate,
+    maxHistorical,
+  ]);
+
+  // Stats for the week view (used in summary card)
+  const weekStats = useMemo(() => {
     const dow = currentDate.getDay();
     const monday = new Date(currentDate);
     monday.setDate(monday.getDate() - ((dow + 6) % 7));
-    const labels = ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab"];
-    return labels.map((label, i) => {
+    const weekData = Array.from({ length: 7 }, (_, i) => {
       const d = new Date(monday);
       d.setDate(d.getDate() + i);
       const k = formatDateKey(d);
       const m =
         k === formatDateKey(new Date()) ? todayMetrics : getMetricsForDate(k);
-      return { day: label, value: m.screenActiveMs };
+      return m.screenActiveMs;
     });
+    const weekTotal = weekData.reduce((s, v) => s + v, 0);
+    const nonZero = weekData.filter((v) => v > 0);
+    const avg = nonZero.length > 0 ? Math.round(weekTotal / nonZero.length) : 0;
+    const minVal = nonZero.length > 0 ? Math.min(...nonZero) : 0;
+    const maxVal = nonZero.length > 0 ? Math.max(...nonZero) : 0;
+    return { weekTotal, avg, minVal, maxVal };
   }, [currentDate, todayMetrics, getMetricsForDate]);
 
-  const maxValue = Math.max(1, ...weekData.map((d) => d.value));
-  const weekTotal = weekData.reduce((s, d) => s + d.value, 0);
-  const nonZero = weekData.filter((d) => d.value > 0);
-  const avg = nonZero.length > 0 ? Math.round(weekTotal / nonZero.length) : 0;
-  const minVal =
-    nonZero.length > 0 ? Math.min(...nonZero.map((d) => d.value)) : 0;
-  const maxVal =
-    nonZero.length > 0 ? Math.max(...nonZero.map((d) => d.value)) : 0;
+  // ─── Donut: today's time distribution ─────────────────────────────
+  const donutSegments = useMemo(() => {
+    const focusMs = dayMetrics.focusSessions.reduce(
+      (s, f) => s + f.duration,
+      0,
+    );
+    const screenOnly = Math.max(0, dayMetrics.screenActiveMs - focusMs);
+    const backgroundMs = Math.max(
+      0,
+      dayMetrics.appOpenMs - dayMetrics.screenActiveMs,
+    );
+    return [
+      {
+        label: "Pantalla activa",
+        value: screenOnly / 3600000,
+        color: "#4B6FA7",
+      },
+      { label: "Enfoque", value: focusMs / 3600000, color: "#22D3EE" },
+      {
+        label: "En segundo plano",
+        value: backgroundMs / 3600000,
+        color: "#334155",
+      },
+    ];
+  }, [dayMetrics]);
+
+  // ─── Stacked weekly: screen vs focus ──────────────────────────────
+  const stackedWeekData = useMemo(() => {
+    const dow = currentDate.getDay();
+    const monday = new Date(currentDate);
+    monday.setDate(monday.getDate() - ((dow + 6) % 7));
+    const labels = ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"];
+    const screenVals: number[] = [];
+    const focusVals: number[] = [];
+    labels.forEach((_, i) => {
+      const d = new Date(monday);
+      d.setDate(d.getDate() + i);
+      const k = formatDateKey(d);
+      const m =
+        k === formatDateKey(new Date()) ? todayMetrics : getMetricsForDate(k);
+      const focusMs = m.focusSessions.reduce((s, f) => s + f.duration, 0);
+      screenVals.push(Math.max(0, m.screenActiveMs - focusMs) / 3600000);
+      focusVals.push(focusMs / 3600000);
+    });
+    return {
+      labels,
+      series: [
+        { name: "Pantalla", values: screenVals, color: "#4B6FA7" },
+        { name: "Enfoque", values: focusVals, color: "#22D3EE" },
+      ],
+    };
+  }, [currentDate, todayMetrics, getMetricsForDate]);
 
   return (
     <>
@@ -135,37 +299,9 @@ const AverageUse = () => {
             </button>
           </div>
 
-          {/* Gráfico de barras */}
-          <div className="bg-linear-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-6 mb-6 border border-white/10">
-            <div className="flex items-end justify-between h-48 gap-3">
-              {weekData.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col items-center flex-1 h-full"
-                >
-                  <div className="flex-1 w-full flex items-end justify-center">
-                    <div
-                      className="w-full bg-linear-to-t from-[#4B6FA7] to-[#6B8FC7] rounded-t-lg"
-                      style={{
-                        height: `${(item.value / maxValue) * 100}%`,
-                        minHeight: item.value > 0 ? "8px" : "0",
-                      }}
-                    />
-                  </div>
-                  <span className="text-xs text-[#94A3B8] mt-2">
-                    {item.day}
-                  </span>
-                </div>
-              ))}
-            </div>
-            <div className="text-center mt-4 pt-4 border-t border-white/10">
-              <p className="text-xs text-[#94A3B8]">Tiempo activo por día</p>
-            </div>
-          </div>
-
           {/* Tabs */}
           <div className="flex gap-2 mb-6">
-            {["Semana", "Día", "Mes", "Año"].map((tab) => (
+            {(["Día", "Semana", "Mes", "Año"] as TabType[]).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -180,32 +316,106 @@ const AverageUse = () => {
             ))}
           </div>
 
+          {/* Gráfico SVG */}
+          <div className="bg-linear-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-4 mb-6 border border-white/10">
+            <MiniChart
+              labels={chartData.labels}
+              values={chartData.values}
+              maxY={chartData.maxY}
+              color="#4B6FA7"
+              height={220}
+              barMode={activeTab === "Semana" || activeTab === "Mes"}
+            />
+            <div className="text-center mt-2 pt-3 border-t border-white/10">
+              <p className="text-xs text-[#94A3B8]">
+                {activeTab === "Día" && "Horas de uso por hora del día"}
+                {activeTab === "Semana" && "Horas de uso por día de la semana"}
+                {activeTab === "Mes" && "Promedio semanal de horas de uso"}
+                {activeTab === "Año" && "Promedio mensual de horas de uso"}
+              </p>
+              <p className="text-[10px] text-[#64748B] mt-1">
+                Eje Y máx: {chartData.maxY.toFixed(1)}h (máximo histórico)
+              </p>
+            </div>
+          </div>
+
           {/* Estadísticas */}
           <div className="bg-linear-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-6 mb-6 border border-white/10">
             <div className="flex justify-between items-start mb-4">
               <div>
                 <p className="text-sm text-[#94A3B8] mb-1">Promedio diario</p>
-                <p className="text-sm text-[#94A3B8]">El mas corto</p>
+                <p className="text-sm text-[#94A3B8]">El más corto</p>
               </div>
               <div className="text-right">
                 <p className="text-sm text-[#94A3B8] mb-1">Semana total</p>
-                <p className="text-sm text-[#94A3B8]">El mas largo</p>
+                <p className="text-sm text-[#94A3B8]">El más largo</p>
               </div>
             </div>
             <div className="flex justify-between items-end pt-4 border-t border-white/10">
               <div>
                 <p className="text-base font-semibold text-[#F8FAFC]">
-                  {formatMs(avg)}
+                  {formatMs(weekStats.avg)}
                 </p>
-                <p className="text-sm text-[#94A3B8]">{formatMs(minVal)}</p>
+                <p className="text-sm text-[#94A3B8]">
+                  {formatMs(weekStats.minVal)}
+                </p>
               </div>
               <div className="text-right">
                 <p className="text-base font-semibold text-[#F8FAFC]">
-                  {formatMs(weekTotal)}
+                  {formatMs(weekStats.weekTotal)}
                 </p>
-                <p className="text-sm text-[#94A3B8]">{formatMs(maxVal)}</p>
+                <p className="text-sm text-[#94A3B8]">
+                  {formatMs(weekStats.maxVal)}
+                </p>
               </div>
             </div>
+            {/* appOpenMs info */}
+            <div className="mt-4 pt-4 border-t border-white/10 flex justify-between">
+              <p className="text-sm text-[#94A3B8]">App abierta (total)</p>
+              <p className="text-sm font-semibold text-[#F8FAFC]">
+                {formatMs(dayMetrics.appOpenMs)}
+              </p>
+            </div>
+          </div>
+
+          {/* Donut: distribución del día */}
+          <div className="bg-linear-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-6 mb-6 border border-white/10">
+            <h3 className="text-sm font-medium text-[#F8FAFC] mb-4 text-center">
+              Distribución del tiempo hoy
+            </h3>
+            <DonutChart
+              segments={donutSegments}
+              size={180}
+              centerValue={formatMs(dayMetrics.screenActiveMs)}
+              centerLabel="Pantalla"
+            />
+            {/* Legend */}
+            <div className="flex justify-center gap-4 mt-4">
+              {donutSegments.map((seg) => (
+                <div key={seg.label} className="flex items-center gap-1.5">
+                  <span
+                    className="inline-block w-2.5 h-2.5 rounded-sm"
+                    style={{ backgroundColor: seg.color }}
+                  />
+                  <span className="text-[10px] text-[#94A3B8]">
+                    {seg.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Stacked: semana pantalla vs enfoque */}
+          <div className="bg-linear-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-4 mb-6 border border-white/10">
+            <h3 className="text-sm font-medium text-[#F8FAFC] mb-3 text-center">
+              Pantalla vs Enfoque — Semana
+            </h3>
+            <StackedBarChart
+              labels={stackedWeekData.labels}
+              series={stackedWeekData.series}
+              maxY={maxHistorical}
+              height={200}
+            />
           </div>
 
           {/* Mensaje inferior */}

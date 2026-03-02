@@ -176,10 +176,9 @@ export function MetricsProvider({ children }: { children: ReactNode }) {
     };
   }, [persist, ensureToday, awardToken]);
 
-  // ── 2. Screen-active accumulator (every 1 s) ──────────────────────
+  // ── 2. Screen-active + appOpen accumulator (every 1 s) ─────────────
   useEffect(() => {
     const id = setInterval(() => {
-      if (!visibleSinceRef.current) return;
       ensureToday();
 
       const now = Date.now();
@@ -187,20 +186,28 @@ export function MetricsProvider({ children }: { children: ReactNode }) {
       lastTickRef.current = now;
 
       const m = metricsRef.current;
-      m.screenActiveMs += delta;
-      persist(m);
 
-      // Update current streak display
-      setCurrentStreakMs(now - streakStartRef.current);
+      // appOpenMs always accumulates (total session time, visible or hidden)
+      m.appOpenMs += delta;
 
-      // Award 1 token per 30 min continuous streak
-      const streakMin = Math.floor(
-        (now - streakStartRef.current) / (30 * 60 * 1000),
-      );
-      if (streakMin > awardedStreakMilestoneRef.current) {
-        awardToken(1, `Racha de ${streakMin * 30} minutos`);
-        awardedStreakMilestoneRef.current = streakMin;
+      // screenActiveMs only accumulates when tab is visible
+      if (visibleSinceRef.current) {
+        m.screenActiveMs += delta;
+
+        // Update current streak display
+        setCurrentStreakMs(now - streakStartRef.current);
+
+        // Award 1 token per 30 min continuous streak
+        const streakMin = Math.floor(
+          (now - streakStartRef.current) / (30 * 60 * 1000),
+        );
+        if (streakMin > awardedStreakMilestoneRef.current) {
+          awardToken(1, `Racha de ${streakMin * 30} minutos`);
+          awardedStreakMilestoneRef.current = streakMin;
+        }
       }
+
+      persist(m);
     }, 1000);
     return () => clearInterval(id);
   }, [persist, ensureToday, awardToken]);
