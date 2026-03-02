@@ -14,13 +14,12 @@ import {
 import Navbar from "../components/Navbar";
 import { useMetrics } from "../context/MetricsContext";
 import {
-  addFocusSession,
   getFocusSessions,
-  uid,
-  addLedgerEntry,
   formatMsShort,
   type FocusSession,
 } from "../lib/storage";
+import { TimerEngine } from "../core/time/TimerEngine";
+import type { TimerState } from "../core/models";
 
 const LABELS = ["Estudio", "Trabajo", "Lectura", "Ejercicio", "Otro"];
 const COLORS = [
@@ -32,21 +31,20 @@ const COLORS = [
   "#A855F7",
   "#EC4899",
 ];
-const DEFAULT_MINUTES = 25;
 
 const Focus = () => {
   const navigate = useNavigate();
   const { refreshBalance, refreshToday } = useMetrics();
-  const [selectedLabel, setSelectedLabel] = useState(LABELS[0]);
+
+  const [timerState, setTimerState] = useState<TimerState>(
+    TimerEngine.getState(),
+  );
+  const [timeLeft, setTimeLeft] = useState(() => TimerEngine.getRemainingMs());
+
+  const [selectedLabel, setSelectedLabel] = useState(timerState.label);
   const [selectedColor, setSelectedColor] = useState(COLORS[0]);
   const [showLabels, setShowLabels] = useState(false);
   const [showColors, setShowColors] = useState(false);
-  const [totalSeconds, setTotalSeconds] = useState(DEFAULT_MINUTES * 60);
-  const [timeLeft, setTimeLeft] = useState(DEFAULT_MINUTES * 60);
-  const [isActive, setIsActive] = useState(false);
-  const [sessionStart, setSessionStart] = useState<number | null>(null);
-
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Last session + today total from storage
   const [lastSession, setLastSession] = useState<FocusSession | null>(null);
@@ -66,104 +64,62 @@ const Focus = () => {
 
   useEffect(() => {
     loadHistory();
-  }, [loadHistory]);
+    // Suscribirse a los cambios del estado global del timer
+    const unsubscribe = TimerEngine.subscribe((newState) => {
+      setTimerState(newState);
+      setTimeLeft(TimerEngine.getRemainingMs());
+      // Si el timer no está activo y acabamos de cambiar de fase, recargamos métricas
+      if (!newState.isActive && newState.phase === "BREAK") {
+        refreshBalance();
+        refreshToday();
+        loadHistory();
+      }
+    });
 
-  // Timer tick
-  useEffect(() => {
-    if (isActive && timeLeft > 0) {
-      intervalRef.current = setInterval(() => {
-        setTimeLeft((t) => {
-          if (t <= 1) {
-            clearInterval(intervalRef.current!);
-            return 0;
-          }
-          return t - 1;
-        });
-      }, 1000);
-    }
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [isActive, timeLeft]);
-
-  // Auto-finish when time runs out
-  useEffect(() => {
-    if (isActive && timeLeft === 0) {
-      finishSession();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [timeLeft, isActive]);
+    return () => unsubscribe();
+  }, [loadHistory, refreshBalance, refreshToday]);
 
   const startTimer = () => {
-    setIsActive(true);
-    if (!sessionStart) setSessionStart(Date.now());
+    TimerEngine.start(selectedLabel);
   };
 
   const pauseTimer = () => {
-    setIsActive(false);
+    TimerEngine.pause();
   };
 
   const resetTimer = () => {
-    setIsActive(false);
-    setTimeLeft(totalSeconds);
-    setSessionStart(null);
+    TimerEngine.reset();
   };
 
   const addTime = () => {
-    setTimeLeft((t) => t + 5 * 60);
-    setTotalSeconds((s) => s + 5 * 60);
+    TimerEngine.addTime(5);
   };
 
   const finishSession = () => {
-    setIsActive(false);
-    const end = Date.now();
-    const start = sessionStart || end;
-    const durationMs = end - start;
-
-    const session: FocusSession = {
-      id: uid(),
-      start,
-      end,
-      duration: durationMs,
-      label: selectedLabel,
-      color: selectedColor,
-    };
-
-    addFocusSession(session);
-
-    // Award 1 token per 25 min of focus
-    const tokensEarned = Math.floor(durationMs / (25 * 60 * 1000));
-    if (tokensEarned > 0) {
-      addLedgerEntry({
-        id: uid(),
-        timestamp: Date.now(),
-        type: "earn",
-        amount: tokensEarned,
-        reason: `Sesión de enfoque: ${selectedLabel} (${Math.round(durationMs / 60000)}m)`,
-      });
-      refreshBalance();
-    }
+    TimerEngine.finishSession();
+    refreshBalance();
     refreshToday();
     loadHistory();
-
-    // Reset
-    setTimeLeft(DEFAULT_MINUTES * 60);
-    setTotalSeconds(DEFAULT_MINUTES * 60);
-    setSessionStart(null);
   };
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
+  const formatTime = (ms: number) => {
+    const totalSeconds = Math.ceil(ms / 1000);
+    const mins = Math.floor(totalSeconds / 60);
+    const secs = totalSeconds % 60;
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const progress = ((totalSeconds - timeLeft) / totalSeconds) * 100;
+  const progress =
+    ((timerState.durationMs - timeLeft) / timerState.durationMs) * 100;
+
+  const isBreak = timerState.phase === "BREAK";
 
   return (
     <>
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 bg-[#0F172A] z-40 border-b border-white/10">
+      <header
+        className={`fixed top-0 left-0 right-0 z-40 border-b border-white/10 ${isBreak ? "bg-green-900/40" : "bg-[#0F172A]"}`}
+      >
         <div className="flex items-center justify-between px-4 py-3">
           <button
             onClick={() => navigate("/")}
@@ -171,15 +127,21 @@ const Focus = () => {
           >
             <ChevronLeft className="w-6 h-6 text-[#F8FAFC]" />
           </button>
-          <h1 className="text-lg font-semibold text-[#F8FAFC]">Concentrarse</h1>
+          <h1 className="text-lg font-semibold text-[#F8FAFC]">
+            {isBreak ? "Descanso" : "Concentrarse"}
+          </h1>
           <button className="p-2 rounded-lg hover:bg-white/10 transition-colors">
-            <Brain className="w-6 h-6 text-[#4B6FA7]" />
+            <Brain
+              className={`w-6 h-6 ${isBreak ? "text-green-400" : "text-[#4B6FA7]"}`}
+            />
           </button>
         </div>
       </header>
 
       {/* Contenido principal */}
-      <main className="pt-20 pb-24 px-4 min-h-screen bg-[#0F172A]">
+      <main
+        className={`pt-20 pb-24 px-4 min-h-screen transition-colors duration-500 ${isBreak ? "bg-green-950/20" : "bg-[#0F172A]"}`}
+      >
         <div className="max-w-md mx-auto w-full">
           {/* Botones de configuración */}
           <div className="flex gap-2 mb-6">
@@ -189,7 +151,8 @@ const Focus = () => {
                   setShowLabels(!showLabels);
                   setShowColors(false);
                 }}
-                className="w-full py-2 px-3 bg-[#1E293B] text-[#F8FAFC] rounded-lg text-xs font-medium hover:bg-[#2D3E52] transition-colors flex items-center justify-center gap-2"
+                disabled={timerState.isActive || isBreak}
+                className={`w-full py-2 px-3 bg-[#1E293B] text-[#F8FAFC] rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-2 ${timerState.isActive || isBreak ? "opacity-50 cursor-not-allowed" : "hover:bg-[#2D3E52]"}`}
               >
                 <Tag className="w-4 h-4" />
                 {selectedLabel}
@@ -222,7 +185,9 @@ const Focus = () => {
                 <Palette className="w-4 h-4" />
                 <span
                   className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: selectedColor }}
+                  style={{
+                    backgroundColor: isBreak ? "#22C55E" : selectedColor,
+                  }}
                 ></span>
                 Estilo
               </button>
@@ -250,7 +215,7 @@ const Focus = () => {
               className="flex-1 py-2 px-3 bg-[#1E293B] text-[#F8FAFC] rounded-lg text-xs font-medium hover:bg-[#2D3E52] transition-colors flex items-center justify-center gap-2"
             >
               <RotateCcw className="w-4 h-4" />
-              Cuenta regresiva
+              Resetear
             </button>
             <button
               onClick={addTime}
@@ -280,7 +245,7 @@ const Focus = () => {
                   cx="144"
                   cy="144"
                   r="130"
-                  stroke={selectedColor}
+                  stroke={isBreak ? "#22C55E" : selectedColor}
                   strokeWidth="8"
                   fill="none"
                   strokeLinecap="round"
@@ -296,10 +261,16 @@ const Focus = () => {
                     {formatTime(timeLeft)}
                   </p>
                   <div
-                    className="h-0.5 w-32 mx-auto"
-                    style={{ backgroundColor: selectedColor }}
+                    className="h-0.5 w-32 mx-auto transition-colors"
+                    style={{
+                      backgroundColor: isBreak ? "#22C55E" : selectedColor,
+                    }}
                   ></div>
-                  <p className="text-xs text-[#94A3B8] mt-2">{selectedLabel}</p>
+                  <p
+                    className={`text-xs mt-2 font-medium ${isBreak ? "text-green-400" : "text-[#94A3B8]"}`}
+                  >
+                    {isBreak ? "Descansando..." : timerState.label}
+                  </p>
                 </div>
               </div>
             </div>
@@ -308,28 +279,34 @@ const Focus = () => {
           {/* Botones de control */}
           <div className="flex justify-center gap-3 mb-8">
             <button
-              onClick={() => (isActive ? pauseTimer() : startTimer())}
-              className="px-8 py-3 bg-[#1E293B] text-[#F8FAFC] rounded-full text-sm font-semibold hover:bg-[#2D3E52] transition-all flex items-center gap-2"
+              onClick={() =>
+                timerState.isActive ? pauseTimer() : startTimer()
+              }
+              className={`px-8 py-3 text-[#F8FAFC] rounded-full text-sm font-semibold transition-all flex items-center gap-2 ${
+                isBreak
+                  ? "bg-green-600 hover:bg-green-700"
+                  : "bg-[#1E293B] hover:bg-[#2D3E52]"
+              }`}
             >
-              {isActive ? (
+              {timerState.isActive ? (
                 <>
                   <Pause className="w-5 h-5" />
-                  Pausar concentración
+                  {isBreak ? "Pausar descanso" : "Pausar concentración"}
                 </>
               ) : (
                 <>
                   <Play className="w-5 h-5" />
-                  Empezar concentración
+                  {isBreak ? "Reanudar descanso" : "Empezar concentración"}
                 </>
               )}
             </button>
-            {sessionStart && (
+            {(timerState.startAtMs || timerState.pausedAtMs) && (
               <button
                 onClick={finishSession}
                 className="px-4 py-3 bg-[#EF4444]/20 text-[#EF4444] rounded-full text-sm font-semibold hover:bg-[#EF4444]/30 transition-all flex items-center gap-2"
               >
                 <Square className="w-4 h-4" />
-                Finalizar
+                {isBreak ? "Omitir" : "Finalizar"}
               </button>
             )}
           </div>
@@ -355,11 +332,19 @@ const Focus = () => {
           </div>
 
           {/* Información */}
-          <div className="mt-6 bg-[#4B6FA7]/10 rounded-xl p-4 border border-[#4B6FA7]/20">
-            <p className="text-xs text-[#94A3B8] text-center">
-              💡 Completa sesiones de 25+ minutos para ganar tokens
-            </p>
-          </div>
+          {isBreak ? (
+            <div className="mt-6 bg-green-900/20 rounded-xl p-4 border border-green-500/20">
+              <p className="text-xs text-green-400 text-center">
+                ✨ Aprovecha para estirarte un poco o tomar agua.
+              </p>
+            </div>
+          ) : (
+            <div className="mt-6 bg-[#4B6FA7]/10 rounded-xl p-4 border border-[#4B6FA7]/20">
+              <p className="text-xs text-[#94A3B8] text-center">
+                💡 Completa sesiones de 25+ minutos para ganar tokens
+              </p>
+            </div>
+          )}
         </div>
       </main>
 
