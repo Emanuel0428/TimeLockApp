@@ -1,6 +1,16 @@
 import type { TimerState, TimerPhase } from "../models";
-import { storage } from "../storage/userStorage";
+import {
+  storage,
+  getCurrentUserId,
+  getUserStorageKey,
+} from "../storage/userStorage";
 import { NotificationService } from "../notifications/NotificationService";
+import {
+  addFocusSession,
+  addLedgerEntry,
+  uid,
+  type FocusSession,
+} from "../../lib/storage";
 
 const TIMER_STATE_KEY = "timerState";
 const FOCUS_MS = 25 * 60 * 1000;
@@ -40,6 +50,28 @@ export class TimerEngine {
     if (this.state.isActive) {
       this.startTick();
     }
+
+    // Sync across tabs
+    window.addEventListener("storage", (e) => {
+      if (
+        e.key ===
+          `timelock:${storage.get("timelock_current_userid", "guest")}:${TIMER_STATE_KEY}` ||
+        e.key === TIMER_STATE_KEY
+      ) {
+        // Just reload state and notify listeners
+        try {
+          if (e.newValue) {
+            this.state = JSON.parse(e.newValue);
+            if (this.state.isActive) {
+              this.startTick();
+            } else {
+              this.stopTick();
+            }
+            this.events.notify(this.state);
+          }
+        } catch (err) {}
+      }
+    });
   }
 
   static subscribe(listener: (state: TimerState) => void) {
@@ -106,20 +138,48 @@ export class TimerEngine {
 
   static finishSession() {
     this.state.isActive = false;
+    const sessionEnd = Date.now();
+    const sessionStart = this.state.startAtMs || sessionEnd;
+    const durationMs =
+      sessionEnd - sessionStart - this.state.accumulatedPausedMs;
+
     this.state.startAtMs = null;
     this.state.pausedAtMs = null;
     this.state.accumulatedPausedMs = 0;
 
     if (this.state.phase === "FOCUS") {
+      // Registrar la sesión y tokens antes de cambiar de fase
+      if (durationMs > 0) {
+        const session: FocusSession = {
+          id: uid(),
+          start: sessionStart,
+          end: sessionEnd,
+          duration: durationMs,
+          label: this.state.label,
+          color: "#4B6FA7", // Default or make it part of state
+        };
+        addFocusSession(session);
+
+        const tokensEarned = Math.floor(durationMs / (25 * 60 * 1000));
+        if (tokensEarned > 0) {
+          addLedgerEntry({
+            id: uid(),
+            timestamp: Date.now(),
+            type: "earn",
+            amount: tokensEarned,
+            reason: `Sesión de enfoque: ${this.state.label} (${Math.round(durationMs / 60000)}m)`,
+          });
+        }
+      }
+
       this.state.phase = "BREAK";
       this.state.durationMs = BREAK_MS;
       NotificationService.send("¡Modo Descanso!", {
         body: "Es momento de tomarte 5 minutos de descanso.",
         type: "POMODORO",
       });
-      // Auto start break? The requirements say:
-      // "Al llegar a 00:00, cambia automáticamente a Descanso 05:00 (también cuenta regresiva)."
-      this.start(); // auto-start break
+      // auto-start break
+      this.start(this.state.label);
     } else {
       this.state.phase = "FOCUS";
       this.state.durationMs = FOCUS_MS;
