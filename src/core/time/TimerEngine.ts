@@ -1,9 +1,5 @@
-import type { TimerState, TimerPhase } from "../models";
-import {
-  storage,
-  getCurrentUserId,
-  getUserStorageKey,
-} from "../storage/userStorage";
+import type { TimerState } from "../models";
+import { storage } from "../storage/userStorage";
 import { NotificationService } from "../notifications/NotificationService";
 import {
   addFocusSession,

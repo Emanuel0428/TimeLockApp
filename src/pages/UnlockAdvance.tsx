@@ -7,7 +7,6 @@ import {
   ShoppingBag,
   Clock,
   ShieldAlert,
-  X,
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import { useMetrics } from "../context/MetricsContext";
