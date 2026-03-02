@@ -2,7 +2,7 @@ import { getMetrics, getToday } from "../../lib/storage";
 import { storage } from "../storage/userStorage";
 import { TokenService } from "../tokens/TokenService";
 import { NotificationService } from "../notifications/NotificationService";
-import type { SettingsModel } from "../models";
+import { defaultSettings, type SettingsModel } from "../models";
 
 export class ChallengesEngine {
   /**
@@ -16,7 +16,7 @@ export class ChallengesEngine {
       return;
     }
 
-    const settings = storage.get<SettingsModel>("settings");
+    const settings = storage.get<SettingsModel>("settings", defaultSettings);
     if (!settings) return;
 
     const metrics = getMetrics(dateKey);

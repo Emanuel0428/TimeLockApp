@@ -1,6 +1,6 @@
 import { NotificationService } from "../notifications/NotificationService";
 import { storage } from "../storage/userStorage";
-import type { SettingsModel } from "../models";
+import { defaultSettings, type SettingsModel } from "../models";
 
 export class MotionDetector {
   private static isListening = false;
@@ -10,7 +10,7 @@ export class MotionDetector {
 
   private static handleMotion = (event: DeviceMotionEvent) => {
     // Solo actuamos si el desafío está activado.
-    const settings = storage.get<SettingsModel>("settings");
+    const settings = storage.get<SettingsModel>("settings", defaultSettings);
     if (!settings || !settings.challenges.noWalkingGame) return;
 
     if (event.acceleration) {
