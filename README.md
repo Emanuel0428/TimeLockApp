@@ -1,14 +1,15 @@
-# 🔒 TimeLockApp
+# TimeLockApp
 
 Una aplicación web moderna para el seguimiento y control del uso del teléfono móvil, diseñada para promover hábitos digitales saludables mediante gamificación y métricas detalladas.
 
-## 📋 Descripción
+## Descripción
 
-TimeLockApp es una aplicación de gestión del tiempo de pantalla que ayuda a los usuarios a ser más conscientes de su uso del teléfono móvil. A través de un sistema de métricas detalladas y un sistema de recompensas con tokens, la aplicación motiva a los usuarios a desarrollar un uso más equilibrado y saludable de sus dispositivos.
+TimeLockApp es una aplicación de gestión del tiempo de pantalla que ayuda a los usuarios a ser más conscientes de su uso del teléfono móvil. A través de un sistema de métricas detalladas y un sistema de recompensas, la aplicación motiva a los usuarios a desarrollar un uso más equilibrado y saludable de sus dispositivos.
 
-## ✨ Características Principales
+## Características Principales
 
-### 📊 Monitoreo de Métricas
+### Monitoreo de Métricas
+
 - **Vista de Inicio**: Panel principal con resumen diario de uso
 - **Navegación temporal**: Consulta métricas de días anteriores
 - **Desbloqueos**: Seguimiento de cuántas veces desbloqueas tu dispositivo
@@ -16,75 +17,86 @@ TimeLockApp es una aplicación de gestión del tiempo de pantalla que ayuda a lo
 - **Uso continuo**: Monitoreo de sesiones prolongadas sin pausas
 - **Avance de desbloqueos**: Progreso de desbloqueos a lo largo del día
 
-### 🏃 Métricas de Actividad
+### Métricas de Actividad
+
 - **Uso en movimiento**: Rastrea el uso del teléfono mientras caminas
 - **Vida sedentaria**: Monitorea el tiempo de uso estático
 - **Sistema de alertas**: Notificaciones sobre patrones poco saludables
 
-### 🎯 Modo Enfoque
+### Modo Enfoque
+
 - **Temporizador Pomodoro**: Sistema de enfoque con intervalos personalizables
 - **Etiquetas personalizadas**: Categoriza tus sesiones (Estudio, Trabajo, Lectura, etc.)
 - **Palette de colores**: Organiza visualmente tus actividades
 - **Historial de sesiones**: Revisa tus sesiones de enfoque anteriores
-- **Recompensas por enfoque**: Gana tokens por completar sesiones
 
-### 🪙 Sistema de Tokens
+### Sistema de Tokens
+
 - **Tienda de tokens**: Sistema de recompensas para incentivar buenos hábitos
 - **Múltiples recompensas**: Desbloquea contenido y beneficios con tus tokens
 - **Balance en tiempo real**: Visualiza tus tokens ganados
 
-### 👤 Gestión de Usuario
+### Gestión de Usuario
+
 - **Sistema de autenticación**: Login y registro de usuarios
 - **Configuración personalizable**: Ajusta la app a tus preferencias
 - **Persistencia de datos**: Almacenamiento local de métricas
 
-## 🛠️ Stack Tecnológico
+## Stack Tecnológico
 
 ### Frontend
+
 - **React 19** - Biblioteca principal de UI
 - **TypeScript** - Tipado estático para mayor seguridad
 - **Vite** - Build tool y servidor de desarrollo ultrarrápido
 - **React Router DOM 7** - Navegación entre páginas
 
 ### Estilos
+
 - **Tailwind CSS 4** - Framework de CSS utility-first
 - **Lucide React** - Librería de iconos moderna y ligera
 
 ### Herramientas de Desarrollo
+
 - **ESLint** - Linting y análisis de código
 - **TypeScript ESLint** - Reglas específicas para TypeScript
 - **Vite Plugin React** - Soporte optimizado para React
 
-## 📦 Instalación
+## Instalación
 
 ### Requisitos Previos
+
 - Node.js 18 o superior
 - npm o yarn
 
 ### Pasos de Instalación
 
 1. **Clonar el repositorio**
+
 ```bash
 git clone <url-del-repositorio>
 cd TimeLockApp
 ```
 
 2. **Instalar dependencias**
+
 ```bash
 npm install
 ```
 
 3. **Iniciar servidor de desarrollo**
+
 ```bash
 npm run dev
 ```
 
 4. **Abrir en el navegador**
+
 ```
 http://localhost:5173
 ```
 
-## 🚀 Scripts Disponibles
+## Scripts Disponibles
 
 ```bash
 # Iniciar servidor de desarrollo
@@ -100,7 +112,7 @@ npm run lint
 npm run preview
 ```
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 TimeLockApp/
@@ -135,33 +147,18 @@ TimeLockApp/
 └── eslint.config.js    # Configuración de ESLint
 ```
 
-## 🎨 Características de Diseño
+## Características de Diseño
 
 - **Diseño Responsive**: Optimizado para dispositivos móviles y desktop
 - **Dark Theme**: Interfaz oscura moderna con gradientes sutiles
 - **Animaciones suaves**: Transiciones y efectos visuales pulidos
 - **Accesibilidad**: Diseño pensado para todos los usuarios
 
-## 🔄 Estado del Proyecto
+## Estado del Proyecto
 
-**Versión Actual**: 0.0.1 (Desarrollo Activo)
+**Versión Actual**: 1.0.0 (Desarrollo Activo)
 
-### En Desarrollo
-- Sistema de contexto para gestión de métricas
-- Biblioteca de utilidades de almacenamiento
-- Integración con APIs de seguimiento de uso
-- Sistema de notificaciones
-- Sincronización entre dispositivos
-
-### Próximas Características
-- Modo oscuro/claro configurable
-- Gráficos y visualizaciones avanzadas
-- Exportación de datos
-- Comparativas semanales/mensuales
-- Metas y objetivos personalizados
-- Integración con wearables
-
-## 🤝 Contribución
+## Contribución
 
 Las contribuciones son bienvenidas. Para contribuir:
 
@@ -171,21 +168,13 @@ Las contribuciones son bienvenidas. Para contribuir:
 4. Push a la rama (`git push origin feature/AmazingFeature`)
 5. Abre un Pull Request
 
-## 📝 Convenciones de Código
-
-- Usar TypeScript para todo el código
-- Seguir las reglas de ESLint configuradas
-- Usar componentes funcionales con Hooks
-- Mantener componentes pequeños y reutilizables
-- Escribir código autodocumentado y comentar lógica compleja
-
-## 📄 Licencia
+## Licencia
 
 Este proyecto es de código privado y uso personal.
 
-## 👨‍💻 Autor
+## Autores
 
-Desarrollado con ❤️ para promover hábitos digitales saludables.
+Desarrollado por ELO, CMM y AEO con ❤️ para promover hábitos digitales saludables.
 
 ---
 
