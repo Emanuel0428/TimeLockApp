@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import QuickAccess from "../components/QuickAccess";
 import Navbar from "../components/Navbar";
 import { storage } from "../core/storage/userStorage";
-import { SettingsModel, defaultSettings } from "../core/models";
+import { defaultSettings, type SettingsModel } from "../core/models";
 import {
   ChevronRight,
   Settings2,
@@ -13,7 +14,6 @@ import {
   Save,
   Moon,
   Activity,
-  MapPin,
 } from "lucide-react";
 import { DeviceControl } from "../core/capabilities/DeviceControl";
 
@@ -26,6 +26,7 @@ type ModalType =
   | "noWalkingGame";
 
 const Settings = () => {
+  const navigate = useNavigate();
   const [settings, setSettings] = useState<SettingsModel>(defaultSettings);
   const [activeModal, setActiveModal] = useState<ModalType>("none");
 
@@ -242,7 +243,10 @@ const Settings = () => {
                   </p>
 
                   <div className="space-y-4">
-                    <button className="w-full flex items-center justify-between p-4 bg-[#0F172A] rounded-xl border border-white/5 hover:border-[#4B6FA7]/50 transition-colors group">
+                    <button
+                      onClick={() => navigate("/blocklists")}
+                      className="w-full flex items-center justify-between p-4 bg-[#0F172A] rounded-xl border border-white/5 hover:border-[#4B6FA7]/50 transition-colors group"
+                    >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-[#4B6FA7]/20 flex items-center justify-center">
                           <Smartphone className="w-5 h-5 text-[#4B6FA7]" />
@@ -259,7 +263,10 @@ const Settings = () => {
                       <ChevronRight className="w-5 h-5 text-[#64748B] group-hover:text-white" />
                     </button>
 
-                    <button className="w-full flex items-center justify-between p-4 bg-[#0F172A] rounded-xl border border-white/5 hover:border-[#4B6FA7]/50 transition-colors group">
+                    <button
+                      onClick={() => navigate("/blocklists")}
+                      className="w-full flex items-center justify-between p-4 bg-[#0F172A] rounded-xl border border-white/5 hover:border-[#4B6FA7]/50 transition-colors group"
+                    >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-[#4B6FA7]/20 flex items-center justify-center">
                           <LinkIcon className="w-5 h-5 text-[#4B6FA7]" />
