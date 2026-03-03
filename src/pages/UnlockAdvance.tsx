@@ -212,13 +212,69 @@ const UnlockAdvance = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-3 p-3 bg-[#1E293B] rounded-lg">
                 <div className="w-10 h-10 rounded-full bg-[#4B6FA7] flex items-center justify-center shrink-0">
-                  <span className="text-white font-bold">1</span>
+                  <span className="text-white font-bold">🎯</span>
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium text-[#F8FAFC]">
                     Completa una sesión de concentración
                   </p>
                   <p className="text-xs text-[#94A3B8]">25 minutos = 1 token</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 p-3 bg-[#1E293B] rounded-lg">
+                <div className="w-10 h-10 rounded-full bg-green-600/80 flex items-center justify-center shrink-0">
+                  <span className="text-white font-bold">📱</span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-[#F8FAFC]">
+                    Menos de 50 recogidas al día
+                  </p>
+                  <p className="text-xs text-[#94A3B8]">
+                    +2 tokens al final del día
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 p-3 bg-[#1E293B] rounded-lg">
+                <div className="w-10 h-10 rounded-full bg-orange-600/80 flex items-center justify-center shrink-0">
+                  <span className="text-white font-bold">👟</span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-[#F8FAFC]">
+                    10,000 pasos en el día
+                  </p>
+                  <p className="text-xs text-[#94A3B8]">
+                    +5 tokens al final del día
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 p-3 bg-[#1E293B] rounded-lg">
+                <div className="w-10 h-10 rounded-full bg-purple-600/80 flex items-center justify-center shrink-0">
+                  <span className="text-white font-bold">⏱️</span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-[#F8FAFC]">
+                    Menos de 5 horas de pantalla
+                  </p>
+                  <p className="text-xs text-[#94A3B8]">
+                    +1 token al final del día
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 p-3 bg-[#1E293B] rounded-lg">
+                <div className="w-10 h-10 rounded-full bg-cyan-600/80 flex items-center justify-center shrink-0">
+                  <span className="text-white font-bold">🔥</span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-[#F8FAFC]">
+                    Racha de 30 minutos continua
+                  </p>
+                  <p className="text-xs text-[#94A3B8]">
+                    +1 token por cada 30 min
+                  </p>
                 </div>
               </div>
             </div>
