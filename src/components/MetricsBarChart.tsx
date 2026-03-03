@@ -1,3 +1,14 @@
+/**
+ * @file MetricsBarChart.tsx
+ * @description Componente reutilizable de gráfico de barras para métricas.
+ *
+ * Envuelve el componente MiniChart con un contenedor estilizado que incluye:
+ * - Fondo con gradiente y borde sutil
+ * - Leyenda descriptiva debajo del gráfico (caption)
+ * - Indicador de máximo histórico del eje Y (yMaxLabel)
+ *
+ * Usado en Pickups.tsx, AverageUse.tsx y ContinuousUse.tsx.
+ */
 import MiniChart from "./MiniChart";
 import type { TabType } from "../lib/dateHelpers";
 

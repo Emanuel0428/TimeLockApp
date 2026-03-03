@@ -1,3 +1,18 @@
+/**
+ * @file MetricsContext.tsx
+ * @description Contexto global de métricas de la aplicación.
+ *
+ * Provee a toda la app acceso a las métricas del día actual, el balance de tokens,
+ * el estado de visibilidad de la pestaña, y la racha de uso continuo.
+ *
+ * Funcionalidades principales:
+ * - **Tracking de visibilidad**: detecta cuándo la pestaña se oculta/muestra (pickups)
+ * - **Acumulador de tiempo**: cada segundo suma screenActiveMs y appOpenMs
+ * - **Métricas por hora**: registra pickups, screenActive y uso continuo por hora (24 slots)
+ * - **Geolocalización**: detecta movimiento para clasificar caminando vs estacionario
+ * - **Tokens**: otorga tokens por hitos (pickups cada 10, caminata cada 10 min, rachas cada 30 min)
+ * - **Rollover de día**: detecta cambio de día y crea métricas nuevas automáticamente
+ */
 import {
   createContext,
   useContext,
