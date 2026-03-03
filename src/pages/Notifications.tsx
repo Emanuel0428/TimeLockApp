@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, Bell, BellRing, Check, Trash2 } from "lucide-react";
 import Navbar from "../components/Navbar";

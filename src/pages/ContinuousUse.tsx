@@ -2,25 +2,25 @@ import { useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, Timer, Share2, X } from "lucide-react";
 import Navbar from "../components/Navbar";
+import MetricsBarChart from "../components/MetricsBarChart";
 import { useMetrics } from "../context/MetricsContext";
-import { formatDateKey, formatMs } from "../lib/storage";
+import { formatDateKey, formatMs, type DailyMetrics } from "../lib/storage";
+import { useMetricsChart, useWeekStats } from "../hooks/useMetricsChart";
+import { type TabType, formatDateDisplay } from "../lib/dateHelpers";
+
+const continuousHoursExtractor = (m: DailyMetrics) =>
+  m.continuousMaxMs / 3600000;
+const continuousMsExtractor = (m: DailyMetrics) => m.continuousMaxMs;
 
 const ContinuousUse = () => {
   const navigate = useNavigate();
   const { todayMetrics, getMetricsForDate, currentStreakMs } = useMetrics();
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [activeTab, setActiveTab] = useState("Semana");
+  const [activeTab, setActiveTab] = useState<TabType>("Semana");
 
   const dateKey = formatDateKey(currentDate);
   const isToday = dateKey === formatDateKey(new Date());
   const dayMetrics = isToday ? todayMetrics : getMetricsForDate(dateKey);
-
-  const formatDate = (date: Date) => {
-    const day = date.getDate();
-    const month = date.toLocaleString("es-ES", { month: "long" });
-    const dayName = date.toLocaleDateString("es-ES", { weekday: "long" });
-    return `${day} ${month}, ${dayName.charAt(0).toUpperCase() + dayName.slice(1)}`;
-  };
 
   const prevDay = useCallback(() => {
     setCurrentDate((d) => {
@@ -37,30 +37,26 @@ const ContinuousUse = () => {
     });
   }, []);
 
-  // Build week data
-  const weekData = useMemo(() => {
-    const dow = currentDate.getDay();
-    const monday = new Date(currentDate);
-    monday.setDate(monday.getDate() - ((dow + 6) % 7));
-    const labels = ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab"];
-    return labels.map((label, i) => {
-      const d = new Date(monday);
-      d.setDate(d.getDate() + i);
-      const k = formatDateKey(d);
-      const m =
-        k === formatDateKey(new Date()) ? todayMetrics : getMetricsForDate(k);
-      return { day: label, value: m.continuousMaxMs };
-    });
-  }, [currentDate, todayMetrics, getMetricsForDate]);
+  // ─── Chart Data via shared hook ───────────────────────────────────
+  const chartData = useMetricsChart({
+    currentDate,
+    activeTab,
+    metricExtractor: continuousHoursExtractor,
+    maxYStorageKey: "maxDailyContinuousHoursHistorical",
+    defaultMaxY: 1,
+  });
 
-  const maxValue = Math.max(1, ...weekData.map((d) => d.value));
-  const weekTotal = weekData.reduce((s, d) => s + d.value, 0);
-  const nonZero = weekData.filter((d) => d.value > 0);
-  const avg = nonZero.length > 0 ? Math.round(weekTotal / nonZero.length) : 0;
-  const minVal =
-    nonZero.length > 0 ? Math.min(...nonZero.map((d) => d.value)) : 0;
-  const maxVal =
-    nonZero.length > 0 ? Math.max(...nonZero.map((d) => d.value)) : 0;
+  // ─── Week stats (in ms for formatMs) ──────────────────────────────
+  const weekStats = useWeekStats(currentDate, continuousMsExtractor);
+
+  // ─── Caption by tab ───────────────────────────────────────────────
+  const caption = useMemo(() => {
+    if (activeTab === "Día") return "Horas de uso continuo por hora del día";
+    if (activeTab === "Semana")
+      return "Horas de uso continuo por día de la semana";
+    if (activeTab === "Mes") return "Promedio semanal de uso continuo";
+    return "Promedio mensual de uso continuo";
+  }, [activeTab]);
 
   // Show max between saved and current live streak
   const displayMax = isToday
@@ -123,7 +119,7 @@ const ContinuousUse = () => {
               </svg>
             </button>
             <h2 className="text-sm font-medium text-[#F8FAFC]">
-              {formatDate(currentDate)}
+              {formatDateDisplay(currentDate)}
             </h2>
             <button
               onClick={nextDay}
@@ -145,37 +141,9 @@ const ContinuousUse = () => {
             </button>
           </div>
 
-          {/* Gráfico de barras */}
-          <div className="bg-linear-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-6 mb-6 border border-white/10">
-            <div className="flex items-end justify-between h-48 gap-3">
-              {weekData.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col items-center flex-1 h-full"
-                >
-                  <div className="flex-1 w-full flex items-end justify-center">
-                    <div
-                      className="w-full bg-linear-to-t from-[#4B6FA7] to-[#6B8FC7] rounded-t-lg"
-                      style={{
-                        height: `${(item.value / maxValue) * 100}%`,
-                        minHeight: item.value > 0 ? "8px" : "0",
-                      }}
-                    />
-                  </div>
-                  <span className="text-xs text-[#94A3B8] mt-2">
-                    {item.day}
-                  </span>
-                </div>
-              ))}
-            </div>
-            <div className="text-center mt-4 pt-4 border-t border-white/10">
-              <p className="text-xs text-[#94A3B8]">Racha máxima por día</p>
-            </div>
-          </div>
-
           {/* Tabs */}
           <div className="flex gap-2 mb-6">
-            {["Semana", "Día", "Mes", "Año"].map((tab) => (
+            {(["Día", "Semana", "Mes", "Año"] as TabType[]).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -189,6 +157,16 @@ const ContinuousUse = () => {
               </button>
             ))}
           </div>
+
+          {/* Gráfico via shared component */}
+          <MetricsBarChart
+            labels={chartData.labels}
+            values={chartData.values}
+            maxY={chartData.maxY}
+            yUnit="h"
+            caption={caption}
+            activeTab={activeTab}
+          />
 
           {/* Estadísticas */}
           <div className="bg-linear-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-6 mb-6 border border-white/10">
@@ -205,15 +183,19 @@ const ContinuousUse = () => {
             <div className="flex justify-between items-end pt-4 border-t border-white/10">
               <div>
                 <p className="text-base font-semibold text-[#F8FAFC]">
-                  {formatMs(avg)}
+                  {formatMs(weekStats.avg)}
                 </p>
-                <p className="text-sm text-[#94A3B8]">{formatMs(minVal)}</p>
+                <p className="text-sm text-[#94A3B8]">
+                  {formatMs(weekStats.minVal)}
+                </p>
               </div>
               <div className="text-right">
                 <p className="text-base font-semibold text-[#F8FAFC]">
-                  {formatMs(weekTotal)}
+                  {formatMs(weekStats.weekTotal)}
                 </p>
-                <p className="text-sm text-[#94A3B8]">{formatMs(maxVal)}</p>
+                <p className="text-sm text-[#94A3B8]">
+                  {formatMs(weekStats.maxVal)}
+                </p>
               </div>
             </div>
           </div>

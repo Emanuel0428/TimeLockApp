@@ -39,13 +39,13 @@ export default function TokenShop() {
   const packages: TokenPackage[] = [
     {
       id: 1,
-      tokens: 50,
-      price: 1500,
+      tokens: 5,
+      price: 2000,
       icon: <Coins className="w-8 h-8" />,
     },
     {
       id: 2,
-      tokens: 200,
+      tokens: 20,
       price: 5000,
       discount: 17,
       badge: "Popular",
@@ -54,7 +54,7 @@ export default function TokenShop() {
     },
     {
       id: 3,
-      tokens: 500,
+      tokens: 50,
       price: 10000,
       discount: 33,
       badge: "Mejor Valor",
@@ -63,14 +63,14 @@ export default function TokenShop() {
     },
     {
       id: 4,
-      tokens: 1000,
+      tokens: 100,
       price: 18000,
       discount: 40,
       icon: <Zap className="w-8 h-8" />,
     },
     {
       id: 5,
-      tokens: 2500,
+      tokens: 300,
       price: 37500,
       discount: 50,
       badge: "Premium",

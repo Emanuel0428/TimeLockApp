@@ -123,8 +123,7 @@ const Home = () => {
                   Recogidas
                 </p>
                 <p className="text-[#F8FAFC] text-lg md:text-xl font-bold">
-                  {metrics.pickups}{" "}
-                  {metrics.pickups === 1 ? "Tiempo" : "Tiempos"}
+                  {metrics.pickups} {metrics.pickups === 1 ? "Vez" : "Veces"}
                 </p>
               </div>
               <div
