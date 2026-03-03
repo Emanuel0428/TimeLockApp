@@ -87,12 +87,30 @@ function defaultMetrics(date: string): DailyMetrics {
 import { storage as ns } from "../core/storage/userStorage";
 
 export function getMetrics(date: string): DailyMetrics {
+  // Try namespaced storage first
   const m = ns.get<DailyMetrics | null>(metricsKey(date), null);
   if (m) {
     // Backfill hourly for old data
     if (!m.hourly) m.hourly = emptyHourly();
     return m;
   }
+
+  // Fallback: check old un-namespaced key (pre-migration data)
+  try {
+    const oldKey = metricsKey(date); // "metrics:YYYY-MM-DD"
+    const raw = localStorage.getItem(oldKey);
+    if (raw) {
+      const parsed = JSON.parse(raw) as DailyMetrics;
+      if (!parsed.hourly) parsed.hourly = emptyHourly();
+      // Auto-migrate to namespaced storage
+      ns.set(metricsKey(parsed.date), parsed);
+      localStorage.removeItem(oldKey);
+      return parsed;
+    }
+  } catch {
+    /* corrupt old data — ignore */
+  }
+
   return defaultMetrics(date);
 }
 
