@@ -50,3 +50,20 @@ export function formatDateDisplay(date: Date): string {
   const dayName = date.toLocaleDateString("es-ES", { weekday: "long" });
   return `${day} ${month}, ${dayName.charAt(0).toUpperCase() + dayName.slice(1)}`;
 }
+
+/**
+ * Returns a label for the w-th 7-day chunk of a month.
+ * e.g. weekRangeLabel(2026, 2, 0) → "01 Mar - 07 Mar"
+ */
+export function weekRangeLabel(
+  year: number,
+  month: number,
+  weekIndex: number,
+): string {
+  const totalDays = daysInMonth(year, month);
+  const startDay = weekIndex * 7 + 1;
+  const endDay = Math.min(startDay + 6, totalDays);
+  const mon = monthLabels[month];
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${pad(startDay)} ${mon} - ${pad(endDay)} ${mon}`;
+}

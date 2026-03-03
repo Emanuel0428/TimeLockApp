@@ -17,6 +17,7 @@ export interface DailyMetrics {
   continuousMaxMs: number;
   stationaryMs: number;
   walkingMs: number;
+  stepsToday: number;
   tokens: number;
   focusSessions: FocusSession[];
 }
@@ -55,6 +56,7 @@ function defaultMetrics(date: string): DailyMetrics {
     continuousMaxMs: 0,
     stationaryMs: 0,
     walkingMs: 0,
+    stepsToday: 0,
     tokens: 0,
     focusSessions: [],
   };
