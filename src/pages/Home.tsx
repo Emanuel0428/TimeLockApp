@@ -37,6 +37,17 @@ const Home = () => {
     setIsEditMode((location.state as any)?.edit === true);
   }, [location.state]);
 
+  useEffect(() => {
+    if (isEditMode) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isEditMode]);
+
   const isToday = formatDateKey(currentDate) === formatDateKey(new Date());
   const metrics = isToday
     ? todayMetrics
@@ -324,9 +335,16 @@ const Home = () => {
 
       {/* Panel de Edición Interactivo */}
       {isEditMode && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-lg flex flex-col">
+        <div 
+          className="fixed inset-0 z-50 bg-black/20 backdrop-blur-xl flex flex-col"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              cancelEdit();
+            }
+          }}
+        >
           {/* Header - Cierre */}
-          <div className="bg-linear-to-b from-[#0F172A] to-[#0F172A]/80 border-b border-white/5 p-4 flex items-center justify-between">
+          <div className="bg-[#0F172A]/40 backdrop-blur-md border-b border-white/5 p-4 flex items-center justify-between">
             <div>
               <h2 className="text-lg font-bold text-[#F8FAFC]">
                 Personalizar Inicio
@@ -342,7 +360,7 @@ const Home = () => {
           </div>
 
           {/* Main Content - Scrollable */}
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto bg-linear-to-b from-[#0F172A]/30 via-transparent to-transparent backdrop-blur-sm">
             <div className="pt-2 px-4 pb-4 max-w-sm mx-auto w-full">
               {/* Grid de módulos en tamaño real */}
               <div className="grid grid-cols-2 gap-3">
@@ -560,7 +578,7 @@ const Home = () => {
           </div>
 
           {/* Footer - Botones */}
-          <div className="bg-linear-to-t from-[#0F172A] to-[#0F172A]/80 border-t border-white/5 p-4 pb-24 flex gap-3">
+          <div className="bg-linear-to-t from-[#0F172A]/40 to-transparent backdrop-blur-md border-t border-white/5 p-4 pb-24 flex gap-3">
             <button
               onClick={cancelEdit}
               className="flex-1 py-3 rounded-xl font-medium text-[#F8FAFC] bg-[#1E293B]/60 hover:bg-[#2D3E52] transition-all duration-200 border border-white/5 hover:border-white/10"
