@@ -316,6 +316,11 @@ Este proyecto es de código privado y uso personal.
 
 Desarrollado por ELO, CMM y AEO con ❤️ para promover hábitos digitales saludables.
 
+## Enlace a figma
+
+https://www.figma.com/design/Pf4DcNiKsU3oUSDTaxR0L8/WireFrames-TImeLock?node-id=0-1&t=43dgUT0p4nUD4FVQ-1
+
+
 ---
 
 **Nota**: Este proyecto está en fase de desarrollo activo. Algunas características pueden estar incompletas o en proceso de implementación.
