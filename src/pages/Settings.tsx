@@ -14,6 +14,7 @@ import {
   Save,
   Moon,
   Activity,
+  Layout,
 } from "lucide-react";
 import { DeviceControl } from "../core/capabilities/DeviceControl";
 
@@ -172,6 +173,24 @@ const Settings = () => {
               Habilita los desafíos y configura sus reglas en el icono ⚙️
             </p>
           </div>
+
+          <button
+            onClick={() => navigate("/", { state: { edit: true } })}
+            className="w-full mb-6 bg-linear-to-br from-[#131F37] to-[#1E293B] rounded-2xl p-4 flex items-center justify-between hover:bg-[#2D3E52] transition-colors border border-white/10"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-[#4B6FA7]/20 flex items-center justify-center">
+                <Layout className="w-6 h-6 text-[#4B6FA7]" />
+              </div>
+              <div className="text-left">
+                <p className="text-[#F8FAFC] font-medium">Personalizar Inicio</p>
+                <p className="text-xs text-[#94A3B8]">
+                  Elige qué módulos mostrar en tu pantalla de inicio
+                </p>
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-[#64748B]" />
+          </button>
 
           <div className="space-y-3">
             <ChallengeItem
