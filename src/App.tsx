@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { MetricsProvider } from "./context/MetricsContext";
+import { ChallengeWidget } from "./components/ChallengeWidget";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -18,6 +19,7 @@ import Notifications from "./pages/Notifications";
 function App() {
   return (
     <MetricsProvider>
+      <ChallengeWidget />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
