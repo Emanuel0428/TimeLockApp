@@ -84,25 +84,20 @@ function defaultMetrics(date: string): DailyMetrics {
 
 // ── Metrics CRUD ───────────────────────────────────────────────────────
 
+import { storage as ns } from "../core/storage/userStorage";
+
 export function getMetrics(date: string): DailyMetrics {
-  try {
-    const raw = localStorage.getItem(metricsKey(date));
-    if (raw) {
-      const parsed = JSON.parse(raw) as DailyMetrics;
-      // Backfill hourly for old data
-      if (!parsed.hourly) {
-        parsed.hourly = emptyHourly();
-      }
-      return parsed;
-    }
-  } catch {
-    /* corrupt data – return default */
+  const m = ns.get<DailyMetrics | null>(metricsKey(date), null);
+  if (m) {
+    // Backfill hourly for old data
+    if (!m.hourly) m.hourly = emptyHourly();
+    return m;
   }
   return defaultMetrics(date);
 }
 
 export function saveMetrics(metrics: DailyMetrics): void {
-  localStorage.setItem(metricsKey(metrics.date), JSON.stringify(metrics));
+  ns.set(metricsKey(metrics.date), metrics);
 }
 
 // ── Token Ledger ───────────────────────────────────────────────────────
@@ -110,19 +105,13 @@ export function saveMetrics(metrics: DailyMetrics): void {
 const LEDGER_KEY = "tokenLedger";
 
 export function getLedger(): TokenLedgerEntry[] {
-  try {
-    const raw = localStorage.getItem(LEDGER_KEY);
-    if (raw) return JSON.parse(raw) as TokenLedgerEntry[];
-  } catch {
-    /* corrupt */
-  }
-  return [];
+  return ns.get<TokenLedgerEntry[]>(LEDGER_KEY, []);
 }
 
 export function addLedgerEntry(entry: TokenLedgerEntry): void {
   const ledger = getLedger();
   ledger.push(entry);
-  localStorage.setItem(LEDGER_KEY, JSON.stringify(ledger));
+  ns.set(LEDGER_KEY, ledger);
 }
 
 export function getTokenBalance(): number {
@@ -139,19 +128,13 @@ export function getTokenBalance(): number {
 const FOCUS_KEY = "focusSessions";
 
 export function getFocusSessions(): FocusSession[] {
-  try {
-    const raw = localStorage.getItem(FOCUS_KEY);
-    if (raw) return JSON.parse(raw) as FocusSession[];
-  } catch {
-    /* corrupt */
-  }
-  return [];
+  return ns.get<FocusSession[]>(FOCUS_KEY, []);
 }
 
 export function addFocusSession(session: FocusSession): void {
   const sessions = getFocusSessions();
   sessions.push(session);
-  localStorage.setItem(FOCUS_KEY, JSON.stringify(sessions));
+  ns.set(FOCUS_KEY, sessions);
 
   // Also add to daily metrics
   const today = getToday();
