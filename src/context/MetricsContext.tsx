@@ -188,7 +188,7 @@ export function MetricsProvider({ children }: { children: ReactNode }) {
       const m = metricsRef.current;
 
       // appOpenMs always accumulates (total session time, visible or hidden)
-      m.appOpenMs += delta;
+      m.appOpenMs = (m.appOpenMs || 0) + delta;
 
       // screenActiveMs only accumulates when tab is visible
       if (visibleSinceRef.current) {
@@ -205,9 +205,13 @@ export function MetricsProvider({ children }: { children: ReactNode }) {
           awardToken(1, `Racha de ${streakMin * 30} minutos`);
           awardedStreakMilestoneRef.current = streakMin;
         }
-      }
 
-      persist(m);
+        // Persist & re-render only when visible
+        persist(m);
+      } else {
+        // When hidden, just save to localStorage without triggering React re-render
+        saveMetrics(m);
+      }
     }, 1000);
     return () => clearInterval(id);
   }, [persist, ensureToday, awardToken]);
