@@ -1,18 +1,10 @@
-/**
- * @file TokenService.ts
- * @description Servicio de gestión de tokens.
- *
- * Clase estática que centraliza todas las operaciones con tokens:
- * ganar, gastar y consultar balance. Usa el book mayor (ledger) almacenado
- * con namespace de usuario. Emite un evento personalizado cuando el balance
- * cambia para que los componentes de UI se actualicen reactivamente.
- */
-
-import { storage } from "../storage/userStorage";
-import type { TokenLedgerEntry } from "../models";
-
-/** Clave de almacenamiento para el libro mayor de tokens */
-const LEDGER_KEY = "tokenLedger";
+import {
+  addLedgerEntry,
+  getLedger,
+  getTokenBalance,
+  uid,
+  type TokenLedgerEntry,
+} from "../../lib/storage";
 
 export class TokenService {
   /**
@@ -20,7 +12,7 @@ export class TokenService {
    * @returns Array con todas las entradas del libro mayor
    */
   static getLedger(): TokenLedgerEntry[] {
-    return storage.get<TokenLedgerEntry[]>(LEDGER_KEY, []);
+    return getLedger();
   }
 
   /**
@@ -29,13 +21,7 @@ export class TokenService {
    * @returns Balance total de tokens
    */
   static getBalance(): number {
-    const ledger = this.getLedger();
-    return ledger.reduce((sum, entry) => {
-      if (entry.type === "earn" || entry.type === "purchase")
-        return sum + entry.amount;
-      if (entry.type === "spend") return sum - entry.amount;
-      return sum;
-    }, 0);
+    return getTokenBalance();
   }
 
   /**
@@ -54,16 +40,14 @@ export class TokenService {
     reason: string,
   ): TokenLedgerEntry {
     const entry: TokenLedgerEntry = {
-      id: Date.now().toString(36) + Math.random().toString(36).substring(2, 9),
+      id: uid(),
       timestamp: Date.now(),
       type,
       amount,
       reason,
     };
 
-    const ledger = this.getLedger();
-    ledger.push(entry);
-    storage.set(LEDGER_KEY, ledger);
+    addLedgerEntry(entry);
 
     // Emitir evento para notificar a componentes de UI sobre el cambio de balance
     window.dispatchEvent(

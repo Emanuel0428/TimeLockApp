@@ -1,239 +1,326 @@
-# 🔒 TimeLock — Aplicación de Bienestar Digital
+# TimeLockApp
 
-**TimeLock** es una aplicación web progresiva (PWA) de bienestar digital que ayuda a los usuarios a gestionar y reducir el tiempo de pantalla de forma consciente. Combina seguimiento de métricas en tiempo real, un sistema de tokens gamificado y un temporizador de enfoque tipo Pomodoro.
+Una aplicación web moderna para el seguimiento y control del uso del teléfono móvil, diseñada para promover hábitos digitales saludables mediante gamificación, métricas detalladas y un sistema de recompensas con tokens.
 
-## 📱 Características Principales
+## Descripción
 
-### 📊 Métricas en Tiempo Real
+TimeLockApp es una aplicación integral de gestión del tiempo de pantalla que ayuda a los usuarios a ser más conscientes de su uso del teléfono móvil. A través de un sistema de métricas detalladas, desafíos personalizables, modo enfoque Pomodoro y un sistema de recompensas basado en tokens, la aplicación motiva a los usuarios a desarrollar un uso más equilibrado y saludable de sus dispositivos móviles.
 
-- **Recogidas (Pickups)**: cuenta cuántas veces abres la app/pestaña
-- **Uso Promedio**: tiempo acumulado con pantalla activa
-- **Uso Continuo**: duración de la sesión más larga sin interrupciones
-- **Actividad física**: clasificación automática caminando vs estacionario (vía GPS)
-- **Gráficos por hora**: visualización real de datos por hora del día
-- **Vista histórica**: navegación por Día, Semana, Mes y Año
+## Características Principales
 
-### 🪙 Sistema de Tokens
+### Monitoreo de Métricas
 
-Economía gamificada para motivar hábitos saludables:
+- **Vista de Inicio**: Panel principal con resumen diario de uso
+- **Navegación temporal**: Consulta métricas de días anteriores
+- **Desbloqueos**: Seguimiento de cuántas veces desbloqueas tu dispositivo
+- **Uso promedio**: Estadísticas de tiempo de pantalla promedio
+- **Uso continuo**: Monitoreo de sesiones prolongadas sin pausas
+- **Avance de desbloqueos**: Progreso de desbloqueos a lo largo del día
 
-| Regla                      | Recompensa | Descripción                           |
-| -------------------------- | ---------- | ------------------------------------- |
-| 🎯 Sesión de enfoque       | +1 token   | Completar 25 minutos de concentración |
-| 📱 Pocas recogidas         | +2 tokens  | Menos de 50 pickups en el día         |
-| 👟 10,000 pasos            | +5 tokens  | Alcanzar meta de pasos diarios        |
-| ⏱️ Poco tiempo de pantalla | +1 token   | Menos de 5 horas de pantalla          |
-| 🔥 Racha continua          | +1 token   | Por cada 30 minutos de uso continuo   |
-| 🚶 Caminata                | +1 token   | Por cada 10 minutos caminando         |
+### Métricas de Actividad
 
-### 🔓 Desbloqueo Temporal
+- **Uso en movimiento**: Rastrea el uso del teléfono mientras caminas
+- **Vida sedentaria**: Monitorea el tiempo de uso estático
+- **Sistema de alertas**: Notificaciones sobre patrones poco saludables
 
-Los tokens se pueden gastar para "desbloquear" temporalmente restricciones:
+### Modo Enfoque
 
-- **1 hora**: 1 token
-- **24 horas**: 5 tokens
+- **Temporizador Pomodoro**: Sistema de enfoque con intervalos personalizables
+- **Etiquetas personalizadas**: Categoriza tus sesiones (Estudio, Trabajo, Lectura, etc.)
+- **Palette de colores**: Organiza visualmente tus actividades
+- **Historial de sesiones**: Revisa tus sesiones de enfoque anteriores
+- **Motor de temporizador (TimerEngine)**: Sistema robusto con soporte para fases de enfoque y descanso
 
-### ⏰ Temporizador de Enfoque (Pomodoro)
+### Sistema de Tokens
 
-- Sesiones de enfoque de 25 minutos con descansos de 5 minutos
-- Etiquetas y colores personalizables
-- Registro automático de sesiones completadas
-- Persiste entre recargas de página
+- **Tienda de tokens**: Sistema de recompensas para incentivar buenos hábitos
+- **Múltiples recompensas**: Desbloquea contenido y beneficios con tus tokens
+- **Balance en tiempo real**: Visualiza tus tokens ganados
+- **Servicio de tokens (TokenService)**: Gestión completa de ganancias y gastos de tokens
+- **Registro de transacciones**: Historial detallado de movimientos de tokens
 
-### 🔔 Sistema de Notificaciones
+### Sistema de Desafíos
 
-- Notificaciones de tipo POMODORO, CHALLENGE, SYSTEM y WARNING
-- Informe diario automático con resumen del día anterior
-- Centro de notificaciones con lectura/no lectura
+- **Desafíos personalizables**: Configura desafíos según tus objetivos
+- **Motor de desafíos (ChallengesEngine)**: Sistema automatizado de evaluación
+- **Tipos de desafíos**: Tiempo de pantalla, desbloqueos, uso continuo, vida sedentaria, etc.
+- **Reportes diarios**: Métricas y análisis de cumplimiento de objetivos
 
----
+### Listas de Bloqueo
 
-## 🏗️ Arquitectura del Proyecto
+- **Bloqueo de aplicaciones**: Previene el uso de apps específicas
+- **Bloqueo de URLs**: Control de acceso a sitios web
+- **Gestión flexible**: Añade o elimina apps y URLs fácilmente
 
-```
-src/
-├── main.tsx                    # Punto de entrada de la aplicación
-├── App.tsx                     # Configuración de rutas (React Router)
-│
-├── lib/                        # Bibliotecas compartidas
-│   ├── storage.ts              # Tipos de datos + CRUD de métricas/tokens/sesiones
-│   └── dateHelpers.ts          # Utilidades de fecha y etiquetas en español
-│
-├── core/                       # Módulos de lógica de negocio
-│   ├── models.ts               # Interfaces de datos (TimerState, Settings, etc.)
-│   ├── storage/
-│   │   └── userStorage.ts      # Almacenamiento con namespace por usuario
-│   ├── tokens/
-│   │   ├── TokenService.ts     # Servicio de gestión de tokens (ganar/gastar)
-│   │   └── tokenRules.ts       # Motor de reglas de ganancia de tokens
-│   ├── time/
-│   │   ├── TimerEngine.ts      # Motor del temporizador Pomodoro
-│   │   └── formatHour12.ts     # Formateador de horas AM/PM
-│   ├── metrics/
-│   │   ├── AppLifecycle.ts     # Tracking de ciclo de vida (visibilidad, apertura)
-│   │   └── DailyReport.ts      # Generación del informe diario
-│   ├── challenges/
-│   │   └── ChallengesEngine.ts # Motor de desafíos diarios
-│   ├── notifications/
-│   │   └── NotificationService.ts  # Servicio de notificaciones
-│   └── capabilities/
-│       ├── DeviceControl.ts    # Control de dispositivo (vibración, wake lock)
-│       └── MotionDetector.ts   # Detección de movimiento (acelerómetro)
-│
-├── context/
-│   └── MetricsContext.tsx      # Contexto global de métricas y tracking en tiempo real
-│
-├── hooks/
-│   ├── useMetricsChart.ts      # Hook para datos de gráficos (Día/Semana/Mes/Año)
-│   ├── useWeekStats.ts         # Hook para estadísticas semanales
-│   └── useSteps.ts             # Hook para conteo de pasos (stub)
-│
-├── components/
-│   ├── MiniChart.tsx           # Componente SVG de gráfico (barras/líneas)
-│   ├── MetricsBarChart.tsx     # Gráfico con contenedor estilizado + leyenda
-│   ├── DonutChart.tsx          # Gráfico de donut para distribución del tiempo
-│   ├── StackedBarChart.tsx     # Gráfico de barras apiladas
-│   ├── Navbar.tsx              # Barra de navegación inferior
-│   └── QuickAccess.tsx         # Accesos rápidos
-│
-└── pages/
-    ├── Home.tsx                # Dashboard principal con 6 tarjetas de métricas
-    ├── Pickups.tsx             # Detalle de recogidas con gráficos
-    ├── AverageUse.tsx          # Detalle de uso promedio con gráficos
-    ├── ContinuousUse.tsx       # Detalle de uso continuo con gráficos
-    ├── UnlockAdvance.tsx       # Página de desbloqueo temporal con tokens
-    ├── Focus.tsx               # Temporizador de enfoque (Pomodoro)
-    ├── Settings.tsx            # Configuración de desafíos
-    ├── Notifications.tsx       # Centro de notificaciones
-    ├── Blocklists.tsx          # Listas de apps/URLs bloqueadas
-    ├── TokenShop.tsx           # Tienda de tokens
-    ├── WalkingUse.tsx          # Detalle de tiempo caminando
-    ├── StationaryLife.tsx      # Detalle de vida estacionaria
-    ├── Login.tsx               # Página de inicio de sesión
-    └── Register.tsx            # Página de registro
-```
+### Gestión de Usuario
 
----
+- **Sistema de autenticación**: Login y registro de usuarios
+- **Configuración personalizable**: Ajusta la app a tus preferencias
+- **Persistencia de datos**: Almacenamiento local por usuario con sistema multi-usuario
+- **Modo invitado**: Prueba la app sin necesidad de registro
 
-## 🔧 Tecnologías
+## Stack Tecnológico
 
-| Tecnología           | Uso                   |
-| -------------------- | --------------------- |
-| **React 19**         | Framework de UI       |
-| **TypeScript**       | Tipado estático       |
-| **Vite 7**           | Bundler y dev server  |
-| **React Router DOM** | Navegación SPA        |
-| **Tailwind CSS 4**   | Estilos utilitarios   |
-| **Lucide React**     | Iconos SVG            |
-| **localStorage**     | Persistencia de datos |
+### Frontend
 
----
+- **React 19.2.4** - Biblioteca principal de UI con las últimas características
+- **TypeScript 5.9.3** - Tipado estático para mayor seguridad y productividad
+- **Vite 7.3.1** - Build tool y servidor de desarrollo ultrarrápido
+- **React Router DOM 7.13.1** - Navegación entre páginas con enrutamiento dinámico
 
-## 🚀 Instalación y Ejecución
+### Estilos
+
+- **Tailwind CSS 4.2.1** - Framework de CSS utility-first de última generación
+- **Lucide React 0.575.0** - Librería de iconos moderna y ligera con más de 1000 iconos
+
+### Arquitectura Core
+
+- **Capacidades del Dispositivo (Device Capabilities)**
+  - `DeviceControl`: Control y gestión del dispositivo
+  - `MotionDetector`: Detección de movimiento y actividad física
+
+- **Sistema de Desafíos (Challenges)**
+  - `ChallengesEngine`: Motor de evaluación y seguimiento de desafíos
+
+- **Métricas (Metrics)**
+  - `AppLifecycle`: Gestión del ciclo de vida de la aplicación
+  - `DailyReport`: Generación de reportes diarios
+
+- **Notificaciones (Notifications)**
+  - `NotificationService`: Sistema de notificaciones push
+
+- **Almacenamiento (Storage)**
+  - `userStorage`: Sistema de almacenamiento multi-usuario
+  - Soporte para múltiples usuarios con aislamiento de datos
+
+- **Temporizador (Time)**
+  - `TimerEngine`: Motor de temporizador Pomodoro con eventos
+
+- **Tokens (Rewards)**
+  - `TokenService`: Gestión de economía de tokens y recompensas
+
+### Herramientas de Desarrollo
+
+- **ESLint 9.39.3** - Linting y análisis estático de código
+- **TypeScript ESLint 8.48.0** - Reglas específicas para TypeScript
+- **Vite Plugin React 5.1.1** - Soporte optimizado para React con Fast Refresh
+
+## Instalación
 
 ### Requisitos Previos
 
-- Node.js ≥ 18
-- npm ≥ 9
+- Node.js 18 o superior
+- npm o yarn
 
-### Pasos
+### Pasos de Instalación
+
+1. **Clonar el repositorio**
 
 ```bash
-# 1. Clonar el repositorio
-git clone https://github.com/Emanuel0428/TimeLockApp.git
+git clone <url-del-repositorio>
 cd TimeLockApp
+```
 
-# 2. Instalar dependencias
+2. **Instalar dependencias**
+
+```bash
 npm install
+```
 
-# 3. Ejecutar en modo desarrollo
+3. **Iniciar servidor de desarrollo**
+
+```bash
+npm run dev
+```
+
+4. **Abrir en el navegador**
+
+```
+http://localhost:5173
+```
+
+## Scripts Disponibles
+
+```bash
+# Iniciar servidor de desarrollo
 npm run dev
 
-# 4. Abrir en el navegador
-# → http://localhost:5173
+# Compilar para producción
+npm run build
+
+# Ejecutar linting
+npm run lint
+
+# Vista previa de build de producción
+npm run preview
 ```
 
-### Scripts Disponibles
+## Estructura del Proyecto
 
-```bash
-npm run dev       # Servidor de desarrollo con hot reload
-npm run build     # Compilación TypeScript + build de producción
-npm run lint      # Linting con ESLint
-npm run preview   # Vista previa del build de producción
 ```
+TimeLockApp/
+├── public/                    # Archivos estáticos
+├── src/
+│   ├── components/            # Componentes reutilizables de UI
+│   │   ├── DonutChart.tsx         # Gráfico de donut para visualización
+│   │   ├── MiniChart.tsx          # Mini gráficos para métricas
+│   │   ├── Navbar.tsx             # Barra de navegación
+│   │   ├── QuickAccess.tsx        # Acceso rápido a funciones
+│   │   └── StackedBarChart.tsx    # Gráfico de barras apiladas
+│   │
+│   ├── context/               # Contextos de React
+│   │   └── MetricsContext.tsx     # Contexto global de métricas
+│   │
+│   ├── core/                  # Lógica de negocio principal
+│   │   ├── models.ts              # Modelos de datos TypeScript
+│   │   │
+│   │   ├── capabilities/          # Capacidades del dispositivo
+│   │   │   ├── DeviceControl.ts
+│   │   │   └── MotionDetector.ts
+│   │   │
+│   │   ├── challenges/            # Sistema de desafíos
+│   │   │   └── ChallengesEngine.ts
+│   │   │
+│   │   ├── metrics/               # Sistema de métricas
+│   │   │   ├── AppLifecycle.ts
+│   │   │   └── DailyReport.ts
+│   │   │
+│   │   ├── notifications/         # Sistema de notificaciones
+│   │   │   └── NotificationService.ts
+│   │   │
+│   │   ├── storage/               # Gestión de almacenamiento
+│   │   │   └── userStorage.ts
+│   │   │
+│   │   ├── time/                  # Sistema de tiempo
+│   │   │   └── TimerEngine.ts
+│   │   │
+│   │   └── tokens/                # Sistema de tokens
+│   │       └── TokenService.ts
+│   │
+│   ├── lib/                   # Utilidades y funciones auxiliares
+│   │   └── storage.ts             # Utilidades de almacenamiento
+│   │
+│   ├── pages/                 # Páginas de la aplicación
+│   │   ├── Home.tsx               # Dashboard principal
+│   │   ├── Login.tsx              # Página de inicio de sesión
+│   │   ├── Register.tsx           # Página de registro
+│   │   ├── Settings.tsx           # Configuración de usuario
+│   │   ├── Blocklists.tsx         # Gestión de bloqueos
+│   │   ├── Focus.tsx              # Modo enfoque/Pomodoro
+│   │   ├── Pickups.tsx            # Métricas de desbloqueos
+│   │   ├── AverageUse.tsx         # Uso promedio
+│   │   ├── WalkingUse.tsx         # Uso en movimiento
+│   │   ├── StationaryLife.tsx     # Vida sedentaria
+│   │   ├── UnlockAdvance.tsx      # Avance de desbloqueos
+│   │   ├── ContinuousUse.tsx      # Uso continuo
+│   │   ├── TokenShop.tsx          # Tienda de tokens
+│   │   └── Notifications.tsx      # Centro de notificaciones
+│   │
+│   ├── App.tsx                # Componente raíz con enrutamiento
+│   ├── main.tsx               # Punto de entrada de la aplicación
+│   └── style.css              # Estilos globales y Tailwind
+│
+├── index.html                 # Template HTML principal
+├── package.json               # Dependencias y scripts
+├── tsconfig.json              # Configuración de TypeScript (base)
+├── tsconfig.app.json          # Configuración de TypeScript (app)
+├── tsconfig.node.json         # Configuración de TypeScript (node)
+├── vite.config.ts             # Configuración de Vite
+├── tailwind.config.js         # Configuración de Tailwind CSS
+└── eslint.config.js           # Configuración de ESLint
+```
+
+## Arquitectura del Sistema
+
+TimeLockApp sigue una arquitectura modular con separación clara de responsabilidades:
+
+### Capa de Presentación (UI)
+- **Pages**: Páginas completas con enrutamiento mediante React Router
+- **Components**: Componentes reutilizables (gráficos, navegación, acceso rápido)
+- **Context**: Estado global de la aplicación con React Context API
+
+### Capa de Lógica de Negocio (Core)
+- **Models**: Interfaces y tipos TypeScript que definen la estructura de datos
+- **Capabilities**: Interacción con capacidades del dispositivo (control, detección de movimiento)
+- **Challenges**: Motor de desafíos y seguimiento de objetivos
+- **Metrics**: Recopilación y análisis de métricas de uso
+- **Notifications**: Sistema de notificaciones con múltiples tipos
+- **Storage**: Persistencia de datos multi-usuario en localStorage
+- **Time**: Motor de temporizador Pomodoro con gestión de fases
+- **Tokens**: Sistema de economía de tokens y recompensas
+
+### Capa de Datos
+- **userStorage**: Gestión de almacenamiento por usuario con aislamiento de datos
+- **storage (lib)**: Utilidades generales de almacenamiento
+- LocalStorage como backend de persistencia
+
+### Flujo de Datos
+1. La UI interactúa con servicios del Core a través de Context
+2. Los servicios Core gestionan la lógica de negocio
+3. Los datos se persisten mediante el sistema de Storage
+4. Las notificaciones se disparan mediante eventos del sistema
+
+## Características de Diseño
+
+- **Diseño Responsive**: Optimizado para dispositivos móviles y desktop
+- **Dark Theme**: Interfaz oscura moderna con gradientes sutiles
+- **Animaciones suaves**: Transiciones y efectos visuales pulidos
+- **Visualización de datos**: Gráficos interactivos (donut charts, bar charts, mini charts)
+- **Accesibilidad**: Diseño pensado para todos los usuarios
+- **Componentes modulares**: UI construida con componentes reutilizables
+
+## Estado del Proyecto
+
+**Versión Actual**: 1.0.0 (Desarrollo Activo)
+
+### Características Implementadas ✅
+- Sistema de autenticación (Login/Register)
+- Dashboard principal con métricas
+- Modo enfoque Pomodoro con TimerEngine
+- Sistema de tokens y recompensas
+- Visualización de métricas (desbloqueos, uso promedio, uso continuo)
+- Sistema de notificaciones
+- Configuración personalizable
+- Gestión de listas de bloqueo (apps y URLs)
+- Almacenamiento multi-usuario
+- Motor de desafíos
+- Componentes de visualización de datos
+
+### En Desarrollo 🚧
+- Integración con APIs del dispositivo móvil
+- Detección de movimiento en tiempo real
+- Sistema de reportes diarios automatizado
+- Funcionalidades avanzadas de control de dispositivo
+
+## Requisitos del Sistema
+
+- **Navegador**: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
+- **JavaScript**: Habilitado
+- **LocalStorage**: Habilitado (para persistencia de datos)
+
+## Contribución
+
+Las contribuciones son bienvenidas. Para contribuir:
+
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## Licencia
+
+Este proyecto es de código privado y uso personal.
+
+## Autores
+
+Desarrollado por ELO, CMM y AEO con ❤️ para promover hábitos digitales saludables.
+
+## Enlace a figma
+
+https://www.figma.com/design/Pf4DcNiKsU3oUSDTaxR0L8/WireFrames-TImeLock?node-id=0-1&t=43dgUT0p4nUD4FVQ-1
+
 
 ---
 
-## 📦 Flujo de Datos
-
-```
-┌─────────────────────────────────────────────────┐
-│                  MetricsContext                   │
-│  (tracking en tiempo real cada 1 segundo)        │
-│                                                   │
-│  • Visibilidad → pickups + hourly.pickups[h]     │
-│  • Timer 1s → screenActiveMs + hourly[h]         │
-│  • Streak → continuousMaxMs + hourly[h]          │
-│  • Geolocation → walkingMs / stationaryMs        │
-│  • Tokens → awardToken() por hitos               │
-└─────────┬───────────────────────────┬─────────────┘
-          │ persist()                 │ useMetrics()
-          ▼                           ▼
-┌─────────────────────┐    ┌─────────────────────────┐
-│  localStorage        │    │ Páginas de métricas      │
-│  (con namespace)     │    │ (Pickups, AverageUse,    │
-│                      │    │  ContinuousUse)          │
-│ timelock:guest:      │    │                          │
-│  metrics:2026-03-03  │    │  useMetricsChart()       │
-│  tokenLedger         │    │  → hourlyExtractor       │
-│  focusSessions       │    │  → metricExtractor       │
-│  timer_state         │    │  → maxY histórico        │
-│  settings            │    │                          │
-└─────────────────────┘    └─────────────────────────┘
-```
-
----
-
-## 🪙 Sistema de Almacenamiento
-
-Toda la persistencia usa `localStorage` con namespace por usuario:
-
-```
-timelock:{userId}:metrics:YYYY-MM-DD   → DailyMetrics completas del día
-timelock:{userId}:tokenLedger          → Array de todas las transacciones de tokens
-timelock:{userId}:focusSessions        → Array de sesiones de enfoque
-timelock:{userId}:timer_state          → Estado del temporizador Pomodoro
-timelock:{userId}:settings             → Configuración del usuario
-timelock:{userId}:notifications        → Lista de notificaciones
-```
-
-La migración desde claves antiguas (sin namespace) es automática: al leer datos de un día anterior, si no se encuentran en la clave nueva, se buscan en la vieja y se migran automáticamente.
-
----
-
-## 📊 Gráficos
-
-Los gráficos se renderizan con **SVG puro** (sin librerías externas de charts):
-
-- **MiniChart.tsx**: componente base que dibuja barras o líneas sobre SVG
-- **MetricsBarChart.tsx**: wrapper con estilos y leyenda de máximo histórico
-- **useMetricsChart.ts**: hook que prepara los datos por pestaña (Día/Semana/Mes/Año)
-
-Cada página de métrica pasa su propio `hourlyExtractor` para que los datos del gráfico "Día" sean distintos y correctos:
-
-- Pickups → `hourly.pickups[h]`
-- Uso Promedio → `hourly.screenActiveMs[h]` (convertido a horas)
-- Uso Continuo → `hourly.continuousMaxMs[h]` (convertido a horas)
-
----
-
-## 👥 Autores
-
-- **Emanuel** — Desarrollo principal
-- Universidad Pontificia Bolivariana — 7° Semestre, Aplicaciones Móviles
-
----
-
-## 📄 Licencia
-
-Proyecto académico — Universidad Pontificia Bolivariana 2026.
+**Nota**: Este proyecto está en fase de desarrollo activo. Algunas características pueden estar incompletas o en proceso de implementación.
