@@ -28,15 +28,25 @@ const UnlockAdvance = () => {
   );
 
   useEffect(() => {
+    refreshBalance();
     const activeUntil = storage.get<number>("active_unlock_until", 0);
     if (activeUntil > Date.now()) {
       setActiveUnlockUntil(activeUntil);
     } else {
       setActiveUnlockUntil(null);
     }
-  }, []);
+  }, [refreshBalance]);
 
   const handleOpenModal = (option: UnlockOption) => {
+    const requiredTokens = option === "1h" ? 1 : 5;
+    const latestBalance = TokenService.getBalance();
+
+    if (latestBalance < requiredTokens) {
+      refreshBalance();
+      alert("No tienes suficientes tokens para esta operación.");
+      return;
+    }
+
     setSelectedOption(option);
     setShowModal(true);
   };
@@ -46,6 +56,14 @@ const UnlockAdvance = () => {
 
     const cost = selectedOption === "1h" ? 1 : 5;
     const durationMs = selectedOption === "1h" ? 3600 * 1000 : 24 * 3600 * 1000;
+    const latestBalance = TokenService.getBalance();
+
+    if (latestBalance < cost) {
+      refreshBalance();
+      alert("No tienes suficientes tokens para esta operación.");
+      setShowModal(false);
+      return;
+    }
 
     // Verificar si ya hay un desbloqueo que cubre este tiempo (regla anti-doble canje opcional)
     if (activeUnlockUntil && activeUnlockUntil > Date.now() + durationMs) {

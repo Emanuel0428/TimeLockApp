@@ -1,27 +1,24 @@
-import { storage } from "../storage/userStorage";
-import type { TokenLedgerEntry } from "../models";
-
-const LEDGER_KEY = "tokenLedger";
+import {
+  addLedgerEntry,
+  getLedger,
+  getTokenBalance,
+  uid,
+  type TokenLedgerEntry,
+} from "../../lib/storage";
 
 export class TokenService {
   /**
    * Obtiene todo el historial de transacciones (ledger) del usuario actual.
    */
   static getLedger(): TokenLedgerEntry[] {
-    return storage.get<TokenLedgerEntry[]>(LEDGER_KEY, []);
+    return getLedger();
   }
 
   /**
    * Obtiene el balance actual de tokens.
    */
   static getBalance(): number {
-    const ledger = this.getLedger();
-    return ledger.reduce((sum, entry) => {
-      if (entry.type === "earn" || entry.type === "purchase")
-        return sum + entry.amount;
-      if (entry.type === "spend") return sum - entry.amount;
-      return sum;
-    }, 0);
+    return getTokenBalance();
   }
 
   /**
@@ -33,16 +30,14 @@ export class TokenService {
     reason: string,
   ): TokenLedgerEntry {
     const entry: TokenLedgerEntry = {
-      id: Date.now().toString(36) + Math.random().toString(36).substring(2, 9),
+      id: uid(),
       timestamp: Date.now(),
       type,
       amount,
       reason,
     };
 
-    const ledger = this.getLedger();
-    ledger.push(entry);
-    storage.set(LEDGER_KEY, ledger);
+    addLedgerEntry(entry);
 
     // Dispatch a custom event to notify UI components (e.g. TokenShop) about the balance change
     window.dispatchEvent(
