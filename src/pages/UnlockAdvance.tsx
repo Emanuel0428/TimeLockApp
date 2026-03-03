@@ -21,6 +21,8 @@ const UnlockAdvance = () => {
   const { tokenBalance, refreshBalance } = useMetrics();
   const [showModal, setShowModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState<UnlockOption>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Verificamos si ya hay un desbloqueo activo
   const [activeUnlockUntil, setActiveUnlockUntil] = useState<number | null>(
@@ -52,7 +54,7 @@ const UnlockAdvance = () => {
   };
 
   const handleConfirmUnlock = () => {
-    if (!selectedOption) return;
+    if (!selectedOption || isProcessing) return;
 
     const cost = selectedOption === "1h" ? 1 : 5;
     const durationMs = selectedOption === "1h" ? 3600 * 1000 : 24 * 3600 * 1000;
@@ -65,13 +67,23 @@ const UnlockAdvance = () => {
       return;
     }
 
-    // Verificar si ya hay un desbloqueo que cubre este tiempo (regla anti-doble canje opcional)
-    if (activeUnlockUntil && activeUnlockUntil > Date.now() + durationMs) {
-      alert(
-        "Ya tienes un desbloqueo activo por más tiempo que el seleccionado.",
+    // Anti-double-redeem: block if any unlock is currently active
+    if (activeUnlockUntil && activeUnlockUntil > Date.now()) {
+      setErrorMsg("Ya tienes un desbloqueo activo. Espera a que expire.");
+      return;
+    }
+
+    // Validate balance from namespaced ledger
+    const currentBalance = TokenService.getBalance();
+    if (currentBalance < cost) {
+      setErrorMsg(
+        `No tienes suficientes tokens. Necesitas ${cost}, tienes ${currentBalance}.`,
       );
       return;
     }
+
+    setIsProcessing(true);
+    setErrorMsg(null);
 
     const success = TokenService.spendTokens(
       cost,
@@ -91,8 +103,10 @@ const UnlockAdvance = () => {
         type: "SYSTEM",
       });
     } else {
-      alert("No tienes suficientes tokens para esta operación.");
+      setErrorMsg("No tienes suficientes tokens para esta operación.");
     }
+
+    setIsProcessing(false);
   };
 
   const formatRemainingTime = (until: number) => {
@@ -216,13 +230,69 @@ const UnlockAdvance = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-3 p-3 bg-[#1E293B] rounded-lg">
                 <div className="w-10 h-10 rounded-full bg-[#4B6FA7] flex items-center justify-center shrink-0">
-                  <span className="text-white font-bold">1</span>
+                  <span className="text-white font-bold">🎯</span>
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium text-[#F8FAFC]">
                     Completa una sesión de concentración
                   </p>
                   <p className="text-xs text-[#94A3B8]">25 minutos = 1 token</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 p-3 bg-[#1E293B] rounded-lg">
+                <div className="w-10 h-10 rounded-full bg-green-600/80 flex items-center justify-center shrink-0">
+                  <span className="text-white font-bold">📱</span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-[#F8FAFC]">
+                    Menos de 50 recogidas al día
+                  </p>
+                  <p className="text-xs text-[#94A3B8]">
+                    +2 tokens al final del día
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 p-3 bg-[#1E293B] rounded-lg">
+                <div className="w-10 h-10 rounded-full bg-orange-600/80 flex items-center justify-center shrink-0">
+                  <span className="text-white font-bold">👟</span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-[#F8FAFC]">
+                    10,000 pasos en el día
+                  </p>
+                  <p className="text-xs text-[#94A3B8]">
+                    +5 tokens al final del día
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 p-3 bg-[#1E293B] rounded-lg">
+                <div className="w-10 h-10 rounded-full bg-purple-600/80 flex items-center justify-center shrink-0">
+                  <span className="text-white font-bold">⏱️</span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-[#F8FAFC]">
+                    Menos de 5 horas de pantalla
+                  </p>
+                  <p className="text-xs text-[#94A3B8]">
+                    +1 token al final del día
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 p-3 bg-[#1E293B] rounded-lg">
+                <div className="w-10 h-10 rounded-full bg-cyan-600/80 flex items-center justify-center shrink-0">
+                  <span className="text-white font-bold">🔥</span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-[#F8FAFC]">
+                    Racha de 30 minutos continua
+                  </p>
+                  <p className="text-xs text-[#94A3B8]">
+                    +1 token por cada 30 min
+                  </p>
                 </div>
               </div>
             </div>
@@ -267,18 +337,27 @@ const UnlockAdvance = () => {
 
             <div className="flex gap-3">
               <button
-                onClick={() => setShowModal(false)}
+                onClick={() => {
+                  setShowModal(false);
+                  setErrorMsg(null);
+                }}
                 className="flex-1 py-3 bg-[#0F172A] text-white font-medium rounded-xl hover:bg-[#131F37] transition-colors border border-white/5"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleConfirmUnlock}
-                className="flex-1 py-3 bg-[#4B6FA7] text-white font-bold rounded-xl hover:bg-[#5a7fbd] transition-colors shadow-lg shadow-[#4B6FA7]/20 flex items-center justify-center gap-2"
+                disabled={isProcessing}
+                className={`flex-1 py-3 bg-[#4B6FA7] text-white font-bold rounded-xl hover:bg-[#5a7fbd] transition-colors shadow-lg shadow-[#4B6FA7]/20 flex items-center justify-center gap-2 ${isProcessing ? "opacity-50 cursor-not-allowed" : ""}`}
               >
-                Desbloquear
+                {isProcessing ? "Procesando..." : "Desbloquear"}
               </button>
             </div>
+            {errorMsg && (
+              <p className="text-red-400 text-xs text-center mt-3">
+                {errorMsg}
+              </p>
+            )}
           </div>
         </div>
       )}

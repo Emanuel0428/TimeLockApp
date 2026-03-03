@@ -9,6 +9,8 @@ import { useMetricsChart, useWeekStats } from "../hooks/useMetricsChart";
 import { type TabType, formatDateDisplay } from "../lib/dateHelpers";
 
 const pickupsExtractor = (m: DailyMetrics) => m.pickups;
+const pickupsHourlyExtractor = (m: DailyMetrics) =>
+  m.hourly?.pickups ?? Array(24).fill(0);
 
 const Pickups = () => {
   const navigate = useNavigate();
@@ -40,6 +42,7 @@ const Pickups = () => {
     currentDate,
     activeTab,
     metricExtractor: pickupsExtractor,
+    hourlyExtractor: pickupsHourlyExtractor,
     maxYStorageKey: "maxDailyPickupsHistorical",
     defaultMaxY: 8,
   });
@@ -153,6 +156,7 @@ const Pickups = () => {
             yUnit=""
             caption={caption}
             activeTab={activeTab}
+            yMaxLabel={`Eje Y máx: ${chartData.maxY} (máximo histórico)`}
           />
 
           {/* Estadísticas */}

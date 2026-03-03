@@ -2,6 +2,8 @@ import { getMetrics, formatMs } from "../../lib/storage";
 import { storage } from "../storage/userStorage";
 import { NotificationService } from "../notifications/NotificationService";
 import { ChallengesEngine } from "../challenges/ChallengesEngine";
+import { evaluateDailyTokenRewards } from "../tokens/tokenRules";
+import { TokenService } from "../tokens/TokenService";
 
 const REPORT_SENT_KEY_PREFIX = "daily_report_sent_";
 
@@ -44,6 +46,14 @@ export class DailyReport {
     );
     const focusCount = metrics.focusSessions.length;
 
+    // Evaluate daily token rewards
+    const rewards = evaluateDailyTokenRewards(yesterdayKey);
+    let totalTokensAwarded = 0;
+    for (const r of rewards) {
+      TokenService.earnTokens(r.amount, r.reason);
+      totalTokensAwarded += r.amount;
+    }
+
     const body = [
       `📊 Resumen del ${yesterdayKey}:`,
       `• Tiempo total (app abierta): ${formatMs(metrics.appOpenMs)}`,
@@ -51,7 +61,12 @@ export class DailyReport {
       `• Recogidas: ${metrics.pickups}`,
       `• Sesiones de enfoque: ${focusCount} (${formatMs(totalFocusMs)})`,
       `• Tokens acumulados: ${metrics.tokens}`,
-    ].join("\n");
+      totalTokensAwarded > 0
+        ? `🎉 +${totalTokensAwarded} tokens ganados por logros diarios`
+        : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
 
     NotificationService.send("Informe Diario", {
       body,

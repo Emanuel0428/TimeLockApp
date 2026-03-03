@@ -11,6 +11,10 @@ import { type TabType, formatDateDisplay } from "../lib/dateHelpers";
 const continuousHoursExtractor = (m: DailyMetrics) =>
   m.continuousMaxMs / 3600000;
 const continuousMsExtractor = (m: DailyMetrics) => m.continuousMaxMs;
+const continuousHourlyExtractor = (m: DailyMetrics) =>
+  (m.hourly?.continuousMaxMs ?? Array(24).fill(0)).map(
+    (ms: number) => ms / 3600000,
+  );
 
 const ContinuousUse = () => {
   const navigate = useNavigate();
@@ -42,6 +46,7 @@ const ContinuousUse = () => {
     currentDate,
     activeTab,
     metricExtractor: continuousHoursExtractor,
+    hourlyExtractor: continuousHourlyExtractor,
     maxYStorageKey: "maxDailyContinuousHoursHistorical",
     defaultMaxY: 1,
   });
@@ -166,6 +171,7 @@ const ContinuousUse = () => {
             yUnit="h"
             caption={caption}
             activeTab={activeTab}
+            yMaxLabel={`Eje Y máx: ${chartData.maxY.toFixed(1)}h (máximo histórico)`}
           />
 
           {/* Estadísticas */}

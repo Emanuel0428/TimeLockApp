@@ -12,6 +12,10 @@ import { type TabType, formatDateDisplay, dayLabels } from "../lib/dateHelpers";
 
 const screenActiveExtractor = (m: DailyMetrics) => m.screenActiveMs / 3600000;
 const screenActiveMsExtractor = (m: DailyMetrics) => m.screenActiveMs;
+const screenActiveHourlyExtractor = (m: DailyMetrics) =>
+  (m.hourly?.screenActiveMs ?? Array(24).fill(0)).map(
+    (ms: number) => ms / 3600000,
+  );
 
 const AverageUse = () => {
   const navigate = useNavigate();
@@ -43,6 +47,7 @@ const AverageUse = () => {
     currentDate,
     activeTab,
     metricExtractor: screenActiveExtractor,
+    hourlyExtractor: screenActiveHourlyExtractor,
     maxYStorageKey: "maxDailyHoursHistorical",
     defaultMaxY: 1,
   });
@@ -208,6 +213,7 @@ const AverageUse = () => {
             yUnit="h"
             caption={caption}
             activeTab={activeTab}
+            yMaxLabel={`Eje Y máx: ${chartData.maxY.toFixed(1)}h (máximo histórico)`}
           />
 
           {/* Estadísticas */}

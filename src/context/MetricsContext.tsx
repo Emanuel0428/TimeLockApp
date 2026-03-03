@@ -1,3 +1,18 @@
+/**
+ * @file MetricsContext.tsx
+ * @description Contexto global de métricas de la aplicación.
+ *
+ * Provee a toda la app acceso a las métricas del día actual, el balance de tokens,
+ * el estado de visibilidad de la pestaña, y la racha de uso continuo.
+ *
+ * Funcionalidades principales:
+ * - **Tracking de visibilidad**: detecta cuándo la pestaña se oculta/muestra (pickups)
+ * - **Acumulador de tiempo**: cada segundo suma screenActiveMs y appOpenMs
+ * - **Métricas por hora**: registra pickups, screenActive y uso continuo por hora (24 slots)
+ * - **Geolocalización**: detecta movimiento para clasificar caminando vs estacionario
+ * - **Tokens**: otorga tokens por hitos (pickups cada 10, caminata cada 10 min, rachas cada 30 min)
+ * - **Rollover de día**: detecta cambio de día y crea métricas nuevas automáticamente
+ */
 import {
   createContext,
   useContext,
@@ -140,6 +155,10 @@ export function MetricsProvider({ children }: { children: ReactNode }) {
         ensureToday();
         const m = metricsRef.current;
         m.pickups += 1;
+        // Track hourly pickup
+        const hour = new Date().getHours();
+        if (m.hourly)
+          m.hourly.pickups[hour] = (m.hourly.pickups[hour] || 0) + 1;
         persist(m);
 
         // Award 1 token per 10 pickups
@@ -155,6 +174,14 @@ export function MetricsProvider({ children }: { children: ReactNode }) {
           const m = metricsRef.current;
           if (streakDuration > m.continuousMaxMs) {
             m.continuousMaxMs = streakDuration;
+          }
+          // Track hourly continuous-use peak
+          const hour = new Date().getHours();
+          if (
+            m.hourly &&
+            streakDuration > (m.hourly.continuousMaxMs[hour] || 0)
+          ) {
+            m.hourly.continuousMaxMs[hour] = streakDuration;
           }
           persist(m);
         }
@@ -194,8 +221,20 @@ export function MetricsProvider({ children }: { children: ReactNode }) {
       if (visibleSinceRef.current) {
         m.screenActiveMs += delta;
 
+        // Track hourly screenActive
+        const hour = new Date().getHours();
+        if (m.hourly)
+          m.hourly.screenActiveMs[hour] =
+            (m.hourly.screenActiveMs[hour] || 0) + delta;
+
         // Update current streak display
         setCurrentStreakMs(now - streakStartRef.current);
+
+        // Update hourly continuous-use peak with live streak
+        const liveStreak = now - streakStartRef.current;
+        if (m.hourly && liveStreak > (m.hourly.continuousMaxMs[hour] || 0)) {
+          m.hourly.continuousMaxMs[hour] = liveStreak;
+        }
 
         // Award 1 token per 30 min continuous streak
         const streakMin = Math.floor(

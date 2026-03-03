@@ -7,7 +7,9 @@ import {
   dayLabels,
   monthLabels,
   daysInMonth,
+  weekRangeLabel,
 } from "../lib/dateHelpers";
+import { formatHour12 } from "../core/time/formatHour12";
 
 // ── Options ────────────────────────────────────────────────────────────
 
@@ -16,6 +18,8 @@ interface UseMetricsChartOptions {
   activeTab: TabType;
   /** Extract the numeric value from DailyMetrics (e.g. m => m.pickups) */
   metricExtractor: (m: DailyMetrics) => number;
+  /** Extract hourly array for "Día" tab (24 values). If not provided, falls back to distribution. */
+  hourlyExtractor?: (m: DailyMetrics) => number[];
   /** localStorage key for the historical max-Y */
   maxYStorageKey: string;
   /** Minimum max-Y so the chart never has a zero scale */
@@ -34,6 +38,7 @@ export function useMetricsChart({
   currentDate,
   activeTab,
   metricExtractor,
+  hourlyExtractor,
   maxYStorageKey,
   defaultMaxY,
 }: UseMetricsChartOptions): ChartResult {
@@ -63,14 +68,24 @@ export function useMetricsChart({
   // ── Chart data by tab ───────────────────────────────────────────────
   const chartData = useMemo((): ChartResult => {
     if (activeTab === "Día") {
+      // Use real hourly data if extractor provided
+      if (hourlyExtractor) {
+        const hourlyValues = hourlyExtractor(dayMetrics);
+        // Show labels every 3 hours in 12h format
+        const labels = Array.from({ length: 24 }, (_, i) =>
+          i % 3 === 0 ? formatHour12(i) : "",
+        );
+        return { labels, values: hourlyValues, maxY: maxHistorical };
+      }
+
+      // Fallback: distribute daily total across active hours
       const hours = Array.from({ length: 24 }, (_, i) => i);
       const totalValue = metricExtractor(dayMetrics);
-      // Distribute across active hours (8–22) as a simple approximation
       const activeHours = hours.filter((h) => h >= 8 && h <= 22);
       const perHour = totalValue / Math.max(1, activeHours.length);
       const values = hours.map((h) => (activeHours.includes(h) ? perHour : 0));
       return {
-        labels: hours.map((h) => (h % 4 === 0 ? `${h}h` : "")),
+        labels: hours.map((h) => (h % 3 === 0 ? formatHour12(h) : "")),
         values,
         maxY: maxHistorical,
       };
@@ -98,7 +113,7 @@ export function useMetricsChart({
       const values: number[] = [];
 
       for (let w = 0; w < weeksCount; w++) {
-        labels.push(`Sem ${w + 1}`);
+        labels.push(weekRangeLabel(year, month, w));
         let weekTotal = 0;
         let weekDays = 0;
         for (let d = w * 7; d < Math.min((w + 1) * 7, totalDays); d++) {
@@ -134,6 +149,7 @@ export function useMetricsChart({
     getMetricsForDate,
     maxHistorical,
     metricExtractor,
+    hourlyExtractor,
   ]);
 
   return chartData;
