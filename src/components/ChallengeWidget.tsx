@@ -38,12 +38,6 @@ export function ChallengeWidget() {
     icon: React.ReactNode;
   } | null>(null);
 
-  // Don't show on certain pages
-  const hiddenPages = ["/focus"];
-  if (hiddenPages.includes(location.pathname)) {
-    return null;
-  }
-
   // Load settings and calculate challenge
   useEffect(() => {
     const settings = storage.get<SettingsModel>("settings", defaultSettings);
@@ -207,6 +201,12 @@ export function ChallengeWidget() {
       window.removeEventListener("resize", onResize);
     };
   }, []);
+
+  // Don't show on certain pages
+  const hiddenPages = ["/focus"];
+  if (hiddenPages.includes(location.pathname)) {
+    return null;
+  }
 
   if (!activeChallenge) return null;
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ChevronLeft,
@@ -49,6 +49,9 @@ const Focus = () => {
   // Last session + today total from storage
   const [lastSession, setLastSession] = useState<FocusSession | null>(null);
   const [todayTotalMs, setTodayTotalMs] = useState(0);
+  
+  // Track previous phase to detect transitions
+  const prevPhaseRef = useRef<"FOCUS" | "BREAK">(timerState.phase);
 
   const loadHistory = useCallback(() => {
     const sessions = getFocusSessions();
@@ -68,12 +71,15 @@ const Focus = () => {
     const unsubscribe = TimerEngine.subscribe((newState) => {
       setTimerState(newState);
       setTimeLeft(TimerEngine.getRemainingMs());
-      // Si el timer no está activo y acabamos de cambiar de fase, recargamos métricas
-      if (!newState.isActive && newState.phase === "BREAK") {
+      
+      // Detectar transición de FOCUS a BREAK (sesión completada)
+      if (prevPhaseRef.current === "FOCUS" && newState.phase === "BREAK") {
         refreshBalance();
         refreshToday();
         loadHistory();
       }
+      
+      prevPhaseRef.current = newState.phase;
     });
 
     return () => unsubscribe();
