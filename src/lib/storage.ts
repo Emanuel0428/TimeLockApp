@@ -9,6 +9,12 @@ export interface FocusSession {
   color: string;
 }
 
+export interface HourlyMetrics {
+  pickups: number[]; // length 24
+  screenActiveMs: number[]; // length 24
+  continuousMaxMs: number[]; // length 24 (peak per hour)
+}
+
 export interface DailyMetrics {
   date: string; // YYYY-MM-DD
   pickups: number;
@@ -20,6 +26,13 @@ export interface DailyMetrics {
   stepsToday: number;
   tokens: number;
   focusSessions: FocusSession[];
+  hourly: HourlyMetrics;
+}
+
+export interface TokenRewardResult {
+  rule: string;
+  amount: number;
+  reason: string;
 }
 
 export interface TokenLedgerEntry {
@@ -47,6 +60,12 @@ function metricsKey(date: string) {
   return `metrics:${date}`;
 }
 
+const emptyHourly = (): HourlyMetrics => ({
+  pickups: Array(24).fill(0),
+  screenActiveMs: Array(24).fill(0),
+  continuousMaxMs: Array(24).fill(0),
+});
+
 function defaultMetrics(date: string): DailyMetrics {
   return {
     date,
@@ -59,6 +78,7 @@ function defaultMetrics(date: string): DailyMetrics {
     stepsToday: 0,
     tokens: 0,
     focusSessions: [],
+    hourly: emptyHourly(),
   };
 }
 
@@ -67,7 +87,14 @@ function defaultMetrics(date: string): DailyMetrics {
 export function getMetrics(date: string): DailyMetrics {
   try {
     const raw = localStorage.getItem(metricsKey(date));
-    if (raw) return JSON.parse(raw) as DailyMetrics;
+    if (raw) {
+      const parsed = JSON.parse(raw) as DailyMetrics;
+      // Backfill hourly for old data
+      if (!parsed.hourly) {
+        parsed.hourly = emptyHourly();
+      }
+      return parsed;
+    }
   } catch {
     /* corrupt data – return default */
   }

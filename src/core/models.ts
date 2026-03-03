@@ -21,13 +21,8 @@ export interface NotificationItem {
   readAt?: number;
 }
 
-export interface TokenLedgerEntry {
-  id: string;
-  type: "earn" | "purchase" | "spend";
-  amount: number;
-  reason: string;
-  timestamp: number;
-}
+// Re-export TokenLedgerEntry from canonical location
+export type { TokenLedgerEntry } from "../lib/storage";
 
 export interface BlockedApp {
   id: string;
@@ -68,5 +63,3 @@ export const defaultSettings: SettingsModel = {
   continuousUseMaxHours: 2,
   continuousUseLockMinutes: 30,
 };
-
-// DailyMetrics is defined in lib/storage.ts (canonical location)
