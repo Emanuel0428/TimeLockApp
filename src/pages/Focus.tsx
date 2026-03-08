@@ -123,7 +123,7 @@ const Focus = () => {
   return (
     <>
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 border-b border-white/10 bg-[#0F172A]">
+      <header className="fixed top-0 left-0 right-0 z-40 border-b border-white/10 bg-[#0F172A] safe-header">
         <div className="flex items-center justify-between px-4 py-3">
           <button
             onClick={() => navigate("/")}
@@ -143,7 +143,7 @@ const Focus = () => {
       </header>
 
       {/* Contenido principal */}
-      <main className="pt-20 pb-24 px-4 min-h-screen transition-colors duration-500 bg-[#0F172A]">
+      <main className="px-4 min-h-screen transition-colors duration-500 bg-[#0F172A] safe-content">
         <div className="max-w-md mx-auto w-full">
           {/* Botones de configuración */}
           <div className="flex gap-2 mb-6">

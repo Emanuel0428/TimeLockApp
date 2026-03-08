@@ -159,7 +159,7 @@ const Settings = () => {
     <>
       <QuickAccess />
 
-      <main className="pt-16 pb-24 px-4 min-h-screen bg-[#0F172A]">
+      <main className="px-4 min-h-screen bg-[#0F172A] safe-content-home">
         <div className="max-w-md mx-auto">
           <h1 className="text-3xl font-bold text-[#F8FAFC] mb-6 text-center">
             Configuración

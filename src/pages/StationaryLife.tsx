@@ -30,7 +30,7 @@ const StationaryLife = () => {
   return (
     <>
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 bg-[#0F172A] z-40 border-b border-white/10">
+      <header className="fixed top-0 left-0 right-0 bg-[#0F172A] z-40 border-b border-white/10 safe-header">
         <div className="flex items-center justify-between px-4 py-3">
           <button
             onClick={() => navigate("/")}
@@ -48,7 +48,7 @@ const StationaryLife = () => {
       </header>
 
       {/* Contenido principal */}
-      <main className="pt-20 pb-24 px-4 min-h-screen bg-[#0F172A]">
+      <main className="px-4 min-h-screen bg-[#0F172A] safe-content">
         <div className="max-w-md mx-auto w-full flex flex-col items-center justify-center min-h-[70vh]">
           {/* Icono central */}
           <div className="mb-8">

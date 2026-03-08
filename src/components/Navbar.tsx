@@ -4,7 +4,7 @@ function Navbar() {
     const navigate = useNavigate()
 
     return (
-        <nav className="fixed bottom-6 left-0 right-0 z-50 flex justify-center px-6">
+        <nav className="fixed left-0 right-0 z-50 flex justify-center px-6 safe-navbar">
             <div className="flex items-center justify-around gap-4 px-8 bg-linear-to-r from-[#0a1929] to-[#131F37] rounded-full shadow-lg shadow-black/20">
                 {/* Home */}
                 <button

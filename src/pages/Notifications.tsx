@@ -56,7 +56,7 @@ const Notifications = () => {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 bg-[#0F172A] z-40 border-b border-white/10">
+      <header className="fixed top-0 left-0 right-0 bg-[#0F172A] z-40 border-b border-white/10 safe-header">
         <div className="flex items-center justify-between px-4 py-3">
           <button
             onClick={() => navigate(-1)}
@@ -73,7 +73,7 @@ const Notifications = () => {
         </div>
       </header>
 
-      <main className="pt-20 pb-24 px-4 min-h-screen bg-[#0F172A]">
+      <main className="px-4 min-h-screen bg-[#0F172A] safe-content">
         <div className="max-w-md mx-auto w-full">
           <div className="flex justify-between items-center mb-6">
             <button

@@ -4,10 +4,38 @@
 
 @import "tailwindcss";
 
+:root {
+  --safe-area-inset-top: env(safe-area-inset-top, 0px);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-inset-left: env(safe-area-inset-left, 0px);
+  --safe-area-inset-right: env(safe-area-inset-right, 0px);
+}
+
 body {
   font-family: 'Poppins', 'Inter', sans-serif;
   margin: 0;
   padding: 0;
+}
+
+/* Safe area support for fixed headers - fixed padding for status bar */
+.safe-header {
+  padding-top: 3rem;
+}
+
+/* Adjust main content padding to account for safe area */
+.safe-content {
+  padding-top: 10rem;
+  padding-bottom: 8rem;
+}
+
+.safe-content-home {
+  padding-top: 7rem;
+  padding-bottom: 8rem;
+}
+
+/* Safe area support for bottom navbar */
+.safe-navbar {
+  bottom: 2rem;
 }
 
 @keyframes shine {

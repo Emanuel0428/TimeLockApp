@@ -71,8 +71,8 @@ function QuickAccess() {
   return (
     <>
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-linear-to-br from-[#1E293B]/95 to-[#0F172A]/95 backdrop-blur-md border-b border-white/10 shadow-lg">
-        <div className="flex items-center justify-between px-4 py-1.5  relative">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-linear-to-br from-[#1E293B]/95 to-[#0F172A]/95 backdrop-blur-md border-b border-white/10 shadow-lg safe-header">
+        <div className="flex items-center justify-between px-4 py-3 relative">
           {/* Menú Hamburguesa */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}

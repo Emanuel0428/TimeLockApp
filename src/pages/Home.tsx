@@ -107,7 +107,7 @@ const Home = () => {
       <QuickAccess />
 
       {/* Contenido principal */}
-      <main className={`${isEditMode ? "" : "pt-16"} pb-24 px-3 md:px-4 min-h-screen bg-[#0F172A]`}>
+      <main className={`${isEditMode ? "" : "safe-content-home"} px-3 md:px-4 min-h-screen bg-[#0F172A]`}>
         <div className="max-w-md mx-auto w-full">
           {/* Navegación de fecha */}
           {!isEditMode && (

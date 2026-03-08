@@ -140,7 +140,7 @@ export default function TokenShop() {
     <>
       <QuickAccess />
 
-      <main className="pt-16 pb-24 px-3 md:px-4 min-h-screen bg-[#0F172A]">
+      <main className="px-3 md:px-4 min-h-screen bg-[#0F172A] safe-content-home">
         <div className="max-w-md mx-auto w-full">
           <div className="flex items-center justify-between mb-4 py-4 px-2">
             <button
