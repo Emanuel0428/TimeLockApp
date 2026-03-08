@@ -8,7 +8,6 @@ import {
   Unlock,
   Timer,
   X,
-  Eye,
   EyeOff,
 } from "lucide-react";
 import QuickAccess from "../components/QuickAccess";

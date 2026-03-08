@@ -27,3 +27,28 @@ extension_mod/*
 
 package-lock.json
 yarn.lock
+
+# Capacitor
+.capacitor
+
+# Android
+android/.idea
+android/.gradle
+android/build
+android/app/build
+android/gradle
+android/gradlew
+android/gradlew.bat
+android/capacitor-cordova-android-plugins
+android/app/src/main/assets/public
+android/app/src/main/assets/capacitor.config.json
+android/local.properties
+android/*.iml
+android/.cxx
+android/.externalNativeBuild
+
+# iOS (si lo agregas después)
+ios/Pods
+ios/App/Podfile.lock
+ios/App/build
+ios/.DS_Store

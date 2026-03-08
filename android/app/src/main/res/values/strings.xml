@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">TimeLockApp</string>
+    <string name="title_activity_main">TimeLockApp</string>
+    <string name="package_name">com.timelockapp.app</string>
+    <string name="custom_url_scheme">com.timelockapp.app</string>
+</resources>
