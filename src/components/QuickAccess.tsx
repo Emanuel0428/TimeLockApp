@@ -139,8 +139,8 @@ function QuickAccess() {
 
           {/* Sidebar */}
           <div className="fixed top-0 left-0 h-full w-64 bg-linear-to-b from-[#1E293B] to-[#0F172A] shadow-2xl z-50 transform transition-transform duration-300 border-r border-white/10">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-8">
+            <div className="p-6 flex flex-col h-full safe-header">
+              <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center gap-2">
                   <img
                     src={logo}

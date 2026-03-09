@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Colores principales de TimeLock App -->
+    
+    <!-- Fondos oscuros -->
+    <color name="colorPrimary">#0F172A</color>
+    <color name="colorPrimaryDark">#0a1929</color>
+    <color name="colorAccent">#4B6FA7</color>
+    
+    <!-- Fondos secundarios -->
+    <color name="background_primary">#0F172A</color>
+    <color name="background_secondary">#131F37</color>
+    <color name="background_tertiary">#1E293B</color>
+    <color name="background_card">#2D3E52</color>
+    
+    <!-- Colores de acento y énfasis -->
+    <color name="accent_blue">#4B6FA7</color>
+    <color name="accent_blue_light">#5c7fb7</color>
+    
+    <!-- Textos -->
+    <color name="text_primary">#F8FAFC</color>
+    <color name="text_secondary">#94A3B8</color>
+    <color name="text_tertiary">#64748B</color>
+    
+    <!-- Bordes y divisores -->
+    <color name="border_light">#FFFFFF</color>
+    <color name="border_subtle">#1E293B</color>
+    
+    <!-- Colores del sistema -->
+    <color name="status_bar">#0a1929</color>
+    <color name="navigation_bar">#0F172A</color>
+</resources>

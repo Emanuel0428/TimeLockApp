@@ -111,7 +111,7 @@ const Home = () => {
         <div className="max-w-md mx-auto w-full">
           {/* Navegación de fecha */}
           {!isEditMode && (
-            <div className="flex items-center justify-between mb-6 py-4 px-2">
+            <div className="flex items-center justify-between mb-6 py-4 px-2 pt-6">
               <button
                 onClick={prevDay}
                 className="p-2 rounded-lg bg-linear-to-br from-[#2D3E52] to-[#1E293B] hover:from-[#3d4e62] hover:to-[#2d3d4b] transition-all duration-200"
@@ -155,7 +155,7 @@ const Home = () => {
           )}
 
           {isEditMode && (
-            <div className="mb-6 py-4 px-2">
+            <div className="mb-6 py-4 px-2 pt-6">
               <h2 className="text-lg font-bold text-[#F8FAFC]">
                 Personalizar Inicio
               </h2>
