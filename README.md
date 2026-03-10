@@ -1,326 +1,208 @@
 # TimeLockApp
 
-Una aplicación web moderna para el seguimiento y control del uso del teléfono móvil, diseñada para promover hábitos digitales saludables mediante gamificación, métricas detalladas y un sistema de recompensas con tokens.
+Aplicación móvil para Android desarrollada con React y Capacitor que ayuda a gestionar el tiempo de pantalla mediante métricas detalladas, desafíos personalizables, modo enfoque Pomodoro y un sistema de recompensas con tokens.
 
-## Descripción
+## Características
 
-TimeLockApp es una aplicación integral de gestión del tiempo de pantalla que ayuda a los usuarios a ser más conscientes de su uso del teléfono móvil. A través de un sistema de métricas detalladas, desafíos personalizables, modo enfoque Pomodoro y un sistema de recompensas basado en tokens, la aplicación motiva a los usuarios a desarrollar un uso más equilibrado y saludable de sus dispositivos móviles.
-
-## Características Principales
-
-### Monitoreo de Métricas
-
-- **Vista de Inicio**: Panel principal con resumen diario de uso
-- **Navegación temporal**: Consulta métricas de días anteriores
-- **Desbloqueos**: Seguimiento de cuántas veces desbloqueas tu dispositivo
-- **Uso promedio**: Estadísticas de tiempo de pantalla promedio
-- **Uso continuo**: Monitoreo de sesiones prolongadas sin pausas
-- **Avance de desbloqueos**: Progreso de desbloqueos a lo largo del día
-
-### Métricas de Actividad
-
-- **Uso en movimiento**: Rastrea el uso del teléfono mientras caminas
-- **Vida sedentaria**: Monitorea el tiempo de uso estático
-- **Sistema de alertas**: Notificaciones sobre patrones poco saludables
+### Monitoreo y Métricas
+- Dashboard con métricas diarias (desbloqueos, tiempo de pantalla, uso continuo)
+- Seguimiento por hora del día (24 slots)
+- Detección automática de movimiento (caminando vs estacionario)
+- Navegación temporal para consultar días anteriores
+- Visualización con gráficos interactivos (donut, barras, mini charts)
 
 ### Modo Enfoque
-
-- **Temporizador Pomodoro**: Sistema de enfoque con intervalos personalizables
-- **Etiquetas personalizadas**: Categoriza tus sesiones (Estudio, Trabajo, Lectura, etc.)
-- **Palette de colores**: Organiza visualmente tus actividades
-- **Historial de sesiones**: Revisa tus sesiones de enfoque anteriores
-- **Motor de temporizador (TimerEngine)**: Sistema robusto con soporte para fases de enfoque y descanso
+- Temporizador Pomodoro con fases de enfoque y descanso
+- Etiquetas y colores personalizables para categorizar sesiones
+- Historial completo de sesiones de enfoque
+- Sincronización entre pestañas en tiempo real
 
 ### Sistema de Tokens
+- Recompensas automáticas por buenos hábitos
+- Tienda de tokens con beneficios desbloqueables
+- Libro mayor con historial de transacciones
+- Balance en tiempo real con eventos de actualización
 
-- **Tienda de tokens**: Sistema de recompensas para incentivar buenos hábitos
-- **Múltiples recompensas**: Desbloquea contenido y beneficios con tus tokens
-- **Balance en tiempo real**: Visualiza tus tokens ganados
-- **Servicio de tokens (TokenService)**: Gestión completa de ganancias y gastos de tokens
-- **Registro de transacciones**: Historial detallado de movimientos de tokens
+### Desafíos y Notificaciones
+- Motor de desafíos con evaluación automatizada
+- Notificaciones para milestones y alertas
+- Centro de notificaciones con historial
 
-### Sistema de Desafíos
-
-- **Desafíos personalizables**: Configura desafíos según tus objetivos
-- **Motor de desafíos (ChallengesEngine)**: Sistema automatizado de evaluación
-- **Tipos de desafíos**: Tiempo de pantalla, desbloqueos, uso continuo, vida sedentaria, etc.
-- **Reportes diarios**: Métricas y análisis de cumplimiento de objetivos
-
-### Listas de Bloqueo
-
-- **Bloqueo de aplicaciones**: Previene el uso de apps específicas
-- **Bloqueo de URLs**: Control de acceso a sitios web
-- **Gestión flexible**: Añade o elimina apps y URLs fácilmente
+### Bloqueo de Aplicaciones
+- Lista personalizable de apps bloqueadas
+- Plugin nativo para Android con permisos de UsageStats y Overlay
+- Monitoreo de app en primer plano
 
 ### Gestión de Usuario
-
-- **Sistema de autenticación**: Login y registro de usuarios
-- **Configuración personalizable**: Ajusta la app a tus preferencias
-- **Persistencia de datos**: Almacenamiento local por usuario con sistema multi-usuario
-- **Modo invitado**: Prueba la app sin necesidad de registro
+- Sistema de autenticación (login/register)
+- Almacenamiento multi-usuario con aislamiento de datos
+- Configuración personalizable
 
 ## Stack Tecnológico
 
-### Frontend
+- **React 19.2.4** + **TypeScript 5.9.3**
+- **Vite 7.3.1** - Build tool y servidor de desarrollo
+- **React Router DOM 7.13.1** - Navegación
+- **Tailwind CSS 4.2.1** - Estilos utility-first
+- **Lucide React 0.575.0** - Iconos
+- **Capacitor 8.2.0** - Framework para aplicaciones nativas (Android)
 
-- **React 19.2.4** - Biblioteca principal de UI con las últimas características
-- **TypeScript 5.9.3** - Tipado estático para mayor seguridad y productividad
-- **Vite 7.3.1** - Build tool y servidor de desarrollo ultrarrápido
-- **React Router DOM 7.13.1** - Navegación entre páginas con enrutamiento dinámico
+## Arquitectura
 
-### Estilos
+### Core Services
+- **TimerEngine**: Temporizador Pomodoro con gestión de fases y persistencia
+- **TokenService**: Sistema de economía con libro mayor de transacciones
+- **ChallengesEngine**: Motor de evaluación de desafíos
+- **NotificationService**: Gestión de notificaciones multi-tipo
+- **AppLifecycle** y **DailyReport**: Métricas y reportes
+- **MotionDetector** y **DeviceControl**: Capacidades del dispositivo
+- **userStorage**: Almacenamiento multi-usuario con aislamiento
 
-- **Tailwind CSS 4.2.1** - Framework de CSS utility-first de última generación
-- **Lucide React 0.575.0** - Librería de iconos moderna y ligera con más de 1000 iconos
+### Context
+- **MetricsContext**: Estado global con tracking automático de:
+  - Tiempo de pantalla activo/inactivo
+  - Pickups por hora
+  - Detección de movimiento (geolocalización)
+  - Sistema de rachas
+  - Otorgamiento automático de tokens por milestones
 
-### Arquitectura Core
+### Plugins Nativos (Android)
+- **AppMonitor**: Plugin Capacitor personalizado para:
+  - Permisos de UsageStats y Overlay
+  - Obtener apps instaladas y estadísticas de uso
+  - Monitoreo de app en primer plano
+  - Gestión de lista de apps bloqueadas
 
-- **Capacidades del Dispositivo (Device Capabilities)**
-  - `DeviceControl`: Control y gestión del dispositivo
-  - `MotionDetector`: Detección de movimiento y actividad física
+## Instalación y Uso
 
-- **Sistema de Desafíos (Challenges)**
-  - `ChallengesEngine`: Motor de evaluación y seguimiento de desafíos
+### Requisitos
+- Node.js 18+
+- Android Studio (para desarrollo Android)
 
-- **Métricas (Metrics)**
-  - `AppLifecycle`: Gestión del ciclo de vida de la aplicación
-  - `DailyReport`: Generación de reportes diarios
-
-- **Notificaciones (Notifications)**
-  - `NotificationService`: Sistema de notificaciones push
-
-- **Almacenamiento (Storage)**
-  - `userStorage`: Sistema de almacenamiento multi-usuario
-  - Soporte para múltiples usuarios con aislamiento de datos
-
-- **Temporizador (Time)**
-  - `TimerEngine`: Motor de temporizador Pomodoro con eventos
-
-- **Tokens (Rewards)**
-  - `TokenService`: Gestión de economía de tokens y recompensas
-
-### Herramientas de Desarrollo
-
-- **ESLint 9.39.3** - Linting y análisis estático de código
-- **TypeScript ESLint 8.48.0** - Reglas específicas para TypeScript
-- **Vite Plugin React 5.1.1** - Soporte optimizado para React con Fast Refresh
-
-## Instalación
-
-### Requisitos Previos
-
-- Node.js 18 o superior
-- npm o yarn
-
-### Pasos de Instalación
-
-1. **Clonar el repositorio**
-
-```bash
-git clone <url-del-repositorio>
-cd TimeLockApp
-```
-
-2. **Instalar dependencias**
-
+### Desarrollo Web
 ```bash
 npm install
-```
-
-3. **Iniciar servidor de desarrollo**
-
-```bash
 npm run dev
+# Abre http://localhost:5173
 ```
 
-4. **Abrir en el navegador**
-
-```
-http://localhost:5173
-```
-
-## Scripts Disponibles
-
+### Desarrollo Android
 ```bash
-# Iniciar servidor de desarrollo
-npm run dev
+# Sincronizar con Android
+npm run android:sync
 
-# Compilar para producción
-npm run build
+# Compilar y ejecutar en dispositivo/emulador
+npm run android:run
 
-# Ejecutar linting
-npm run lint
+# Abrir en Android Studio
+npm run android:open
+```
 
-# Vista previa de build de producción
-npm run preview
+### Scripts Disponibles
+```bash
+npm run dev              # Servidor de desarrollo
+npm run build            # Compilar para producción
+npm run lint             # Análisis de código
+npm run preview          # Vista previa de build
+npm run android:sync     # Sincronizar web con Android
+npm run android:run      # Compilar y ejecutar en Android
+npm run android:open     # Abrir proyecto en Android Studio
 ```
 
 ## Estructura del Proyecto
 
 ```
-TimeLockApp/
-├── public/                    # Archivos estáticos
-├── src/
-│   ├── components/            # Componentes reutilizables de UI
-│   │   ├── DonutChart.tsx         # Gráfico de donut para visualización
-│   │   ├── MiniChart.tsx          # Mini gráficos para métricas
-│   │   ├── Navbar.tsx             # Barra de navegación
-│   │   ├── QuickAccess.tsx        # Acceso rápido a funciones
-│   │   └── StackedBarChart.tsx    # Gráfico de barras apiladas
-│   │
-│   ├── context/               # Contextos de React
-│   │   └── MetricsContext.tsx     # Contexto global de métricas
-│   │
-│   ├── core/                  # Lógica de negocio principal
-│   │   ├── models.ts              # Modelos de datos TypeScript
-│   │   │
-│   │   ├── capabilities/          # Capacidades del dispositivo
-│   │   │   ├── DeviceControl.ts
-│   │   │   └── MotionDetector.ts
-│   │   │
-│   │   ├── challenges/            # Sistema de desafíos
-│   │   │   └── ChallengesEngine.ts
-│   │   │
-│   │   ├── metrics/               # Sistema de métricas
-│   │   │   ├── AppLifecycle.ts
-│   │   │   └── DailyReport.ts
-│   │   │
-│   │   ├── notifications/         # Sistema de notificaciones
-│   │   │   └── NotificationService.ts
-│   │   │
-│   │   ├── storage/               # Gestión de almacenamiento
-│   │   │   └── userStorage.ts
-│   │   │
-│   │   ├── time/                  # Sistema de tiempo
-│   │   │   └── TimerEngine.ts
-│   │   │
-│   │   └── tokens/                # Sistema de tokens
-│   │       └── TokenService.ts
-│   │
-│   ├── lib/                   # Utilidades y funciones auxiliares
-│   │   └── storage.ts             # Utilidades de almacenamiento
-│   │
-│   ├── pages/                 # Páginas de la aplicación
-│   │   ├── Home.tsx               # Dashboard principal
-│   │   ├── Login.tsx              # Página de inicio de sesión
-│   │   ├── Register.tsx           # Página de registro
-│   │   ├── Settings.tsx           # Configuración de usuario
-│   │   ├── Blocklists.tsx         # Gestión de bloqueos
-│   │   ├── Focus.tsx              # Modo enfoque/Pomodoro
-│   │   ├── Pickups.tsx            # Métricas de desbloqueos
-│   │   ├── AverageUse.tsx         # Uso promedio
-│   │   ├── WalkingUse.tsx         # Uso en movimiento
-│   │   ├── StationaryLife.tsx     # Vida sedentaria
-│   │   ├── UnlockAdvance.tsx      # Avance de desbloqueos
-│   │   ├── ContinuousUse.tsx      # Uso continuo
-│   │   ├── TokenShop.tsx          # Tienda de tokens
-│   │   └── Notifications.tsx      # Centro de notificaciones
-│   │
-│   ├── App.tsx                # Componente raíz con enrutamiento
-│   ├── main.tsx               # Punto de entrada de la aplicación
-│   └── style.css              # Estilos globales y Tailwind
+src/
+├── components/          # Componentes UI reutilizables
+│   ├── ChallengeWidget.tsx
+│   ├── DonutChart.tsx
+│   ├── MetricsBarChart.tsx
+│   ├── MiniChart.tsx
+│   ├── Navbar.tsx
+│   ├── QuickAccess.tsx
+│   └── StackedBarChart.tsx
 │
-├── index.html                 # Template HTML principal
-├── package.json               # Dependencias y scripts
-├── tsconfig.json              # Configuración de TypeScript (base)
-├── tsconfig.app.json          # Configuración de TypeScript (app)
-├── tsconfig.node.json         # Configuración de TypeScript (node)
-├── vite.config.ts             # Configuración de Vite
-├── tailwind.config.js         # Configuración de Tailwind CSS
-└── eslint.config.js           # Configuración de ESLint
+├── context/            # Estado global
+│   └── MetricsContext.tsx
+│
+├── core/               # Lógica de negocio
+│   ├── models.ts
+│   ├── capabilities/   # DeviceControl, MotionDetector
+│   ├── challenges/     # ChallengesEngine
+│   ├── metrics/        # AppLifecycle, DailyReport
+│   ├── notifications/  # NotificationService
+│   ├── storage/        # userStorage
+│   ├── time/           # TimerEngine, formatHour12
+│   └── tokens/         # TokenService, tokenRules
+│
+├── hooks/              # Custom hooks
+│   ├── useMetricsChart.ts
+│   └── useSteps.ts
+│
+├── lib/                # Utilidades
+│   ├── dateHelpers.ts
+│   ├── homeModulesStorage.ts
+│   └── storage.ts
+│
+├── pages/              # Páginas de la app
+│   ├── Home.tsx, Login.tsx, Register.tsx
+│   ├── Settings.tsx, Blocklists.tsx, Notifications.tsx
+│   ├── Focus.tsx, TokenShop.tsx
+│   ├── Pickups.tsx, AverageUse.tsx, ContinuousUse.tsx
+│   ├── WalkingUse.tsx, StationaryLife.tsx, UnlockAdvance.tsx
+│   └── PluginTest.tsx
+│
+├── plugins/            # Plugins Capacitor
+│   ├── AppMonitor.ts
+│   └── web.ts
+│
+└── App.tsx, main.tsx, style.css
+
+android/                # Proyecto nativo Android
 ```
 
-## Arquitectura del Sistema
+## Características Técnicas
 
-TimeLockApp sigue una arquitectura modular con separación clara de responsabilidades:
+### Sistema de Métricas
+- **Tracking automático**: MetricsContext monitorea actividad cada segundo
+- **Métricas por hora**: 24 slots diarios con pickups, tiempo activo y rachas
+- **Detección de movimiento**: Geolocalización para clasificar caminando/estacionario
+- **Rollover automático**: Detecta cambio de día y crea métricas nuevas
+- **Tokens automáticos**: Recompensas por milestones (pickups cada 10, caminata cada 10min, rachas cada 30min)
 
-### Capa de Presentación (UI)
-- **Pages**: Páginas completas con enrutamiento mediante React Router
-- **Components**: Componentes reutilizables (gráficos, navegación, acceso rápido)
-- **Context**: Estado global de la aplicación con React Context API
+### Persistencia
+- LocalStorage con prefijo por usuario
+- Aislamiento completo entre usuarios
+- Sincronización entre pestañas con eventos de Storage
+- Serialización automática de datos
 
-### Capa de Lógica de Negocio (Core)
-- **Models**: Interfaces y tipos TypeScript que definen la estructura de datos
-- **Capabilities**: Interacción con capacidades del dispositivo (control, detección de movimiento)
-- **Challenges**: Motor de desafíos y seguimiento de objetivos
-- **Metrics**: Recopilación y análisis de métricas de uso
-- **Notifications**: Sistema de notificaciones con múltiples tipos
-- **Storage**: Persistencia de datos multi-usuario en localStorage
-- **Time**: Motor de temporizador Pomodoro con gestión de fases
-- **Tokens**: Sistema de economía de tokens y recompensas
+### UI/UX
+- Diseño responsive con Tailwind CSS
+- Dark theme con gradientes
+- Animaciones y transiciones suaves
+- Gráficos interactivos (donut, barras, mini charts)
+- Iconos con Lucide React
 
-### Capa de Datos
-- **userStorage**: Gestión de almacenamiento por usuario con aislamiento de datos
-- **storage (lib)**: Utilidades generales de almacenamiento
-- LocalStorage como backend de persistencia
+## Configuración
 
-### Flujo de Datos
-1. La UI interactúa con servicios del Core a través de Context
-2. Los servicios Core gestionan la lógica de negocio
-3. Los datos se persisten mediante el sistema de Storage
-4. Las notificaciones se disparan mediante eventos del sistema
+### Capacitor
+- **appId**: `com.timelockapp.app`
+- **webDir**: `dist`
+- **androidScheme**: `https`
 
-## Características de Diseño
-
-- **Diseño Responsive**: Optimizado para dispositivos móviles y desktop
-- **Dark Theme**: Interfaz oscura moderna con gradientes sutiles
-- **Animaciones suaves**: Transiciones y efectos visuales pulidos
-- **Visualización de datos**: Gráficos interactivos (donut charts, bar charts, mini charts)
-- **Accesibilidad**: Diseño pensado para todos los usuarios
-- **Componentes modulares**: UI construida con componentes reutilizables
-
-## Estado del Proyecto
-
-**Versión Actual**: 1.0.0 (Desarrollo Activo)
-
-### Características Implementadas ✅
-- Sistema de autenticación (Login/Register)
-- Dashboard principal con métricas
-- Modo enfoque Pomodoro con TimerEngine
-- Sistema de tokens y recompensas
-- Visualización de métricas (desbloqueos, uso promedio, uso continuo)
-- Sistema de notificaciones
-- Configuración personalizable
-- Gestión de listas de bloqueo (apps y URLs)
-- Almacenamiento multi-usuario
-- Motor de desafíos
-- Componentes de visualización de datos
-
-### En Desarrollo 🚧
-- Integración con APIs del dispositivo móvil
-- Detección de movimiento en tiempo real
-- Sistema de reportes diarios automatizado
-- Funcionalidades avanzadas de control de dispositivo
-
-## Requisitos del Sistema
-
-- **Navegador**: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
-- **JavaScript**: Habilitado
-- **LocalStorage**: Habilitado (para persistencia de datos)
-
-## Contribución
-
-Las contribuciones son bienvenidas. Para contribuir:
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## Licencia
-
-Este proyecto es de código privado y uso personal.
+### Permisos Android (plugin AppMonitor)
+- **UsageStats**: Estadísticas de uso de apps
+- **Overlay**: Mostrar bloqueadores sobre apps
 
 ## Autores
 
-Desarrollado por ELO, CMM y AEO con ❤️ para promover hábitos digitales saludables.
+Desarrollado por ELO, CMM y AEO
 
-## Enlace a figma
+## Diseño
 
-https://www.figma.com/design/Pf4DcNiKsU3oUSDTaxR0L8/WireFrames-TImeLock?node-id=0-1&t=43dgUT0p4nUD4FVQ-1
-
+[Wireframes en Figma](https://www.figma.com/design/Pf4DcNiKsU3oUSDTaxR0L8/WireFrames-TImeLock?node-id=0-1&t=43dgUT0p4nUD4FVQ-1)
 
 ---
 
-**Nota**: Este proyecto está en fase de desarrollo activo. Algunas características pueden estar incompletas o en proceso de implementación.
+**Versión**: 1.0.0
+
