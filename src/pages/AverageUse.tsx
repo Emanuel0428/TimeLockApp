@@ -118,27 +118,27 @@ const AverageUse = () => {
   return (
     <>
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 bg-[#0F172A] z-40 border-b border-white/10 safe-header">
+      <header className="header-page">
         <div className="flex items-center justify-between px-4 py-3">
           <button
             onClick={() => navigate("/")}
-            className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+            className="btn-icon"
           >
-            <ChevronLeft className="w-6 h-6 text-[#F8FAFC]" />
+            <ChevronLeft className="w-6 h-6 icon-primary" />
           </button>
-          <h1 className="text-lg font-semibold text-[#F8FAFC]">Uso Regular</h1>
-          <button className="p-2 rounded-lg hover:bg-white/10 transition-colors">
-            <BarChart3 className="w-6 h-6 text-[#4B6FA7]" />
+          <h1 className="header-primary">Uso Regular</h1>
+          <button className="btn-icon">
+            <BarChart3 className="w-6 h-6 icon-brand" />
           </button>
         </div>
       </header>
 
       {/* Contenido principal */}
-      <main className="px-4 min-h-screen bg-[#0F172A] safe-content">
+      <main className="px-4 bg-main safe-content">
         <div className="max-w-md mx-auto w-full">
           {/* Mensaje informativo */}
           <div className="mb-4 text-center">
-            <p className="text-sm text-[#94A3B8]">
+            <p className="text-sm text-secondary">
               {dayMetrics.screenActiveMs > 0
                 ? `Tiempo activo: ${formatMs(dayMetrics.screenActiveMs)}`
                 : "No hay registros hoy"}
@@ -149,7 +149,7 @@ const AverageUse = () => {
           <div className="flex items-center justify-between mb-6 py-3">
             <button
               onClick={prevDay}
-              className="p-2 rounded-lg bg-[#1E293B] hover:bg-[#2D3E52] transition-colors"
+              className="btn-icon-brand"
             >
               <svg
                 className="w-5 h-5 text-white"
@@ -165,12 +165,12 @@ const AverageUse = () => {
                 />
               </svg>
             </button>
-            <h2 className="text-sm font-medium text-[#F8FAFC]">
+            <h2 className="header-secondary">
               {formatDateDisplay(currentDate)}
             </h2>
             <button
               onClick={nextDay}
-              className="p-2 rounded-lg bg-[#1E293B] hover:bg-[#2D3E52] transition-colors"
+              className="btn-icon-brand"
             >
               <svg
                 className="w-5 h-5 text-white"
@@ -195,9 +195,7 @@ const AverageUse = () => {
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
-                  activeTab === tab
-                    ? "bg-[#4B6FA7] text-white"
-                    : "bg-[#1E293B] text-[#94A3B8] hover:bg-[#2D3E52]"
+                  activeTab === tab ? "tab-active" : "tab-inactive"
                 }`}
               >
                 {tab}
@@ -217,47 +215,47 @@ const AverageUse = () => {
           />
 
           {/* Estadísticas */}
-          <div className="bg-linear-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-6 mb-6 border border-white/10">
+          <div className="card-primary mb-6">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <p className="text-sm text-[#94A3B8] mb-1">Promedio diario</p>
-                <p className="text-sm text-[#94A3B8]">El más corto</p>
+                <p className="text-sm text-secondary mb-1">Promedio diario</p>
+                <p className="text-sm text-secondary">El más corto</p>
               </div>
               <div className="text-right">
-                <p className="text-sm text-[#94A3B8] mb-1">Semana total</p>
-                <p className="text-sm text-[#94A3B8]">El más largo</p>
+                <p className="text-sm text-secondary mb-1">Semana total</p>
+                <p className="text-sm text-secondary">El más largo</p>
               </div>
             </div>
             <div className="flex justify-between items-end pt-4 border-t border-white/10">
               <div>
-                <p className="text-base font-semibold text-[#F8FAFC]">
+                <p className="text-base font-semibold text-primary">
                   {formatMs(weekStats.avg)}
                 </p>
-                <p className="text-sm text-[#94A3B8]">
+                <p className="text-sm text-secondary">
                   {formatMs(weekStats.minVal)}
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-base font-semibold text-[#F8FAFC]">
+                <p className="text-base font-semibold text-primary">
                   {formatMs(weekStats.weekTotal)}
                 </p>
-                <p className="text-sm text-[#94A3B8]">
+                <p className="text-sm text-secondary">
                   {formatMs(weekStats.maxVal)}
                 </p>
               </div>
             </div>
             {/* appOpenMs info */}
             <div className="mt-4 pt-4 border-t border-white/10 flex justify-between">
-              <p className="text-sm text-[#94A3B8]">App abierta (total)</p>
-              <p className="text-sm font-semibold text-[#F8FAFC]">
+              <p className="text-sm text-secondary">App abierta (total)</p>
+              <p className="text-sm font-semibold text-primary">
                 {formatMs(dayMetrics.appOpenMs)}
               </p>
             </div>
           </div>
 
           {/* Donut: distribución del día */}
-          <div className="bg-linear-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-6 mb-6 border border-white/10">
-            <h3 className="text-sm font-medium text-[#F8FAFC] mb-4 text-center">
+          <div className="card-primary mb-6">
+            <h3 className="header-secondary mb-4 text-center">
               Distribución del tiempo hoy
             </h3>
             <DonutChart

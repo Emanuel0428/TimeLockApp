@@ -4,6 +4,9 @@
 
 @import "tailwindcss";
 
+/* Sistema de Colores y Componentes TimeLockApp */
+@import "./styles/components.css";
+
 :root {
   --safe-area-inset-top: env(safe-area-inset-top, 0px);
   --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);

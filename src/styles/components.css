@@ -1,0 +1,136 @@
+/* ========================================
+   Sistema de Colores TimeLockApp - Clases Predeterminadas
+   ======================================== */
+
+:root {
+  /* === Variables de Colores === */
+  --app-bg-primary: #0F172A;           /* Fondo principal - oscuro profundo */
+  --app-bg-secondary: #1E293B;         /* Fondo secundario - slate 800 */
+  --app-bg-tertiary: #131F37;          /* Fondo terciario para gradientes */
+  --app-bg-hover: #2D3E52;             /* Color de hover para botones/elementos */
+  
+  --app-text-primary: #F8FAFC;         /* Texto principal - blanco suave */
+  --app-text-secondary: #94A3B8;       /* Texto secundario - slate 400 */
+  --app-text-tertiary: #64748B;        /* Texto terciario - slate 500 */
+  
+  --app-brand-primary: #4B6FA7;        /* Color principal de la marca */
+  --app-brand-secondary: #5a7fbd;      /* Variación del color principal */
+  --app-brand-light: #7FD3FF;          /* Versión clara para gradientes */
+  --app-brand-accent: #22D3EE;         /* Color de acento (cyan) */
+}
+
+/* ========================================
+   CLASES DE COMPONENTES PREDETERMINADOS
+   ======================================== */
+
+/* === BOTONES === */
+.btn-primary {
+  @apply bg-gradient-to-r from-[#4B6FA7] to-[#5a7fbd] text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg hover:shadow-[#4B6FA7]/30 transition-all duration-200 hover:scale-105;
+}
+
+.btn-secondary {
+  @apply bg-[#1E293B] text-[#94A3B8] px-4 py-2 rounded-lg font-medium hover:bg-[#2D3E52] hover:text-[#F8FAFC] transition-all duration-200;
+}
+
+.btn-icon {
+  @apply p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-200;
+}
+
+.btn-icon-brand {
+  @apply p-2 rounded-lg bg-[#1E293B] hover:bg-[#2D3E52] transition-colors;
+}
+
+/* === HEADERS/TÍTULOS === */
+.header-primary {
+  @apply text-lg font-semibold text-[#F8FAFC];
+}
+
+.header-secondary {
+  @apply text-base font-medium text-[#F8FAFC];
+}
+
+.header-page {
+  @apply fixed top-0 left-0 right-0 bg-[#0F172A] z-40 border-b border-white/10;
+  padding-top: 3rem; /* safe-header equivalent */
+}
+
+.header-nav {
+  @apply fixed top-0 left-0 right-0 z-50 bg-gradient-to-br from-slate-800/95 to-slate-900/95 backdrop-blur-md border-b border-white/10 shadow-lg;
+  padding-top: 3rem; /* safe-header equivalent */
+}
+
+/* === TEXTO === */
+.text-primary {
+  @apply text-[#F8FAFC];
+}
+
+.text-secondary {
+  @apply text-[#94A3B8];
+}
+
+.text-tertiary {
+  @apply text-[#64748B];
+}
+
+.text-brand {
+  @apply text-[#4B6FA7];
+}
+
+/* === ICONOS === */
+.icon-brand {
+  @apply text-[#4B6FA7];
+}
+
+.icon-primary {
+  @apply text-[#F8FAFC];
+}
+
+.icon-secondary {
+  @apply text-[#94A3B8];
+}
+
+/* === CARDS/TARJETAS === */
+.card-primary {
+  @apply bg-gradient-to-br from-[#131F37]/85 to-[#0F172A]/85 rounded-2xl p-6 border border-white/10;
+}
+
+.card-secondary {
+  @apply bg-[#1E293B] rounded-xl p-4 border border-white/10;
+}
+
+.card-widget {
+  @apply bg-gradient-to-br from-[#1E293B]/90 to-[#131F37]/90 rounded-2xl p-4 shadow-2xl border border-white/10 backdrop-blur-md;
+}
+
+/* === FONDOS === */
+.bg-main {
+  @apply min-h-screen bg-[#0F172A];
+}
+
+.bg-sidebar {
+  @apply bg-gradient-to-b from-slate-800 to-slate-900;
+}
+
+/* === TABS === */
+.tab-active {
+  @apply bg-[#4B6FA7] text-white;
+}
+
+.tab-inactive {
+  @apply bg-[#1E293B] text-[#94A3B8] hover:bg-[#2D3E52];
+}
+
+/* === SAFE AREA CLASSES === */
+.safe-content {
+  padding-top: 10rem;
+  padding-bottom: 8rem;
+}
+
+.safe-content-home {
+  padding-top: 7rem;
+  padding-bottom: 8rem;
+}
+
+.safe-navbar {
+  bottom: 2rem;
+}

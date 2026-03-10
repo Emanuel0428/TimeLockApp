@@ -71,18 +71,18 @@ function QuickAccess() {
   return (
     <>
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-linear-to-br from-[#1E293B]/95 to-[#0F172A]/95 backdrop-blur-md border-b border-white/10 shadow-lg safe-header">
+      <nav className="header-nav">
         <div className="flex items-center justify-between px-4 py-3 relative">
           {/* Menú Hamburguesa */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="w-9 h-9 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-200"
+            className="btn-icon"
             aria-label="Menú"
           >
             <div className="space-y-1">
-              <span className="block w-4 h-0.5 bg-[#4B6FA7] rounded-full"></span>
-              <span className="block w-4 h-0.5 bg-[#4B6FA7] rounded-full"></span>
-              <span className="block w-4 h-0.5 bg-[#4B6FA7] rounded-full"></span>
+              <span className="block w-4 h-0.5 text-brand rounded-full"></span>
+              <span className="block w-4 h-0.5 text-brand rounded-full"></span>
+              <span className="block w-4 h-0.5 text-brand rounded-full"></span>
             </div>
           </button>
 
@@ -93,7 +93,7 @@ function QuickAccess() {
               alt="Logo TimeLock"
               className="w-12 h-12 drop-shadow-2xl brightness-0 invert"
             />
-            <h1 className="text-xl font-bold text-[#F8FAFC]">TimeLock</h1>
+            <h1 className="text-xl font-bold text-primary">TimeLock</h1>
           </div>
 
           {/* Icono Calendario */}
