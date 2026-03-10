@@ -76,6 +76,10 @@
   @apply text-[#4B6FA7];
 }
 
+.bg-brand {
+  @apply bg-[#4B6FA7];
+}
+
 /* === ICONOS === */
 .icon-brand {
   @apply text-[#4B6FA7];

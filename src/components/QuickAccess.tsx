@@ -80,9 +80,9 @@ function QuickAccess() {
             aria-label="Menú"
           >
             <div className="space-y-1">
-              <span className="block w-4 h-0.5 text-brand rounded-full"></span>
-              <span className="block w-4 h-0.5 text-brand rounded-full"></span>
-              <span className="block w-4 h-0.5 text-brand rounded-full"></span>
+              <span className="block w-4 h-0.5 bg-brand rounded-full"></span>
+              <span className="block w-4 h-0.5 bg-brand rounded-full"></span>
+              <span className="block w-4 h-0.5 bg-brand rounded-full"></span>
             </div>
           </button>
 
