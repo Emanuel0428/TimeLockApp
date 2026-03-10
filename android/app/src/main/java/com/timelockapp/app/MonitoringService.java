@@ -244,7 +244,7 @@ public class MonitoringService extends Service {
         layout.setPadding(50, 50, 50, 50);
 
         TextView titleText = new TextView(this);
-        titleText.setText("⏱️ App Blocked");
+        titleText.setText("⏱️ Aplicación Bloqueada");
         titleText.setTextSize(28);
         titleText.setTextColor(0xFFFFFFFF);
         titleText.setGravity(Gravity.CENTER);
@@ -252,7 +252,7 @@ public class MonitoringService extends Service {
         layout.addView(titleText);
 
         TextView messageText = new TextView(this);
-        messageText.setText("This app is currently blocked by TimeLock.\n\nTake a break and come back later!");
+        messageText.setText("Esta aplicación está bloqueada por TimeLock.\n\nPor favor, regresa a la aplicación principal para desbloquearla.");
         messageText.setTextSize(18);
         messageText.setTextColor(0xFFCCCCCC);
         messageText.setGravity(Gravity.CENTER);
@@ -260,7 +260,7 @@ public class MonitoringService extends Service {
         layout.addView(messageText);
 
         Button returnButton = new Button(this);
-        returnButton.setText("Return to TimeLock");
+        returnButton.setText("Regresar a TimeLock");
         returnButton.setTextSize(16);
         returnButton.setPadding(40, 20, 40, 20);
         returnButton.setOnClickListener(v -> {

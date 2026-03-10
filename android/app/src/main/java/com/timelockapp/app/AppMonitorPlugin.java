@@ -40,7 +40,6 @@ public class AppMonitorPlugin extends Plugin {
     @Override
     public void load() {
         super.load();
-        android.util.Log.d("AppMonitor", "✅ AppMonitor Plugin loaded successfully!");
     }
 
     @PluginMethod
@@ -53,7 +52,6 @@ public class AppMonitorPlugin extends Plugin {
                 return;
             }
 
-            android.util.Log.d("AppMonitor", "Opening Usage Stats settings");
             Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
@@ -62,7 +60,6 @@ public class AppMonitorPlugin extends Plugin {
             ret.put("granted", false);
             call.resolve(ret);
         } catch (Exception e) {
-            android.util.Log.e("AppMonitor", "Error requesting usage permission: " + e.getMessage());
             call.reject("Error opening settings: " + e.getMessage());
         }
     }
@@ -102,7 +99,6 @@ public class AppMonitorPlugin extends Plugin {
                 call.resolve(ret);
             }
         } catch (Exception e) {
-            android.util.Log.e("AppMonitor", "Error requesting overlay permission: " + e.getMessage());
             call.reject("Error opening settings: " + e.getMessage());
         }
     }
@@ -153,7 +149,6 @@ public class AppMonitorPlugin extends Plugin {
                     if (appName.toLowerCase().contains("youtube") || 
                         appName.toLowerCase().contains("chrome") ||
                         packageName.contains("youtube")) {
-                        Log.d("AppMonitor", "Found app: " + appName + " (" + packageName + ")");
                     }
                 } catch (Exception e) {
                     app.put("appName", packageName);
@@ -285,7 +280,7 @@ public class AppMonitorPlugin extends Plugin {
             }
 
             JSObject ret = new JSObject();
-            ret.put("success", true);
+            ret.put("exito", true);
             call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error setting blocked apps: " + e.getMessage());
@@ -324,7 +319,7 @@ public class AppMonitorPlugin extends Plugin {
             }
 
             JSObject ret = new JSObject();
-            ret.put("success", true);
+            ret.put("exito", true);
             call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error starting monitoring: " + e.getMessage());
@@ -338,7 +333,7 @@ public class AppMonitorPlugin extends Plugin {
             getContext().stopService(intent);
 
             JSObject ret = new JSObject();
-            ret.put("success", true);
+            ret.put("exito", true);
             call.resolve(ret);
         } catch (Exception e) {
             call.reject("Error stopping monitoring: " + e.getMessage());
@@ -348,7 +343,7 @@ public class AppMonitorPlugin extends Plugin {
     @PluginMethod
     public void isMonitoring(PluginCall call) {
         JSObject ret = new JSObject();
-        ret.put("active", MonitoringService.isRunning());
+        ret.put("activado", MonitoringService.isRunning());
         call.resolve(ret);
     }
 
