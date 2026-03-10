@@ -16,7 +16,6 @@ public class MainActivity extends BridgeActivity {
         // Register plugin BEFORE calling super.onCreate
         registerPlugin(AppMonitorPlugin.class);
         super.onCreate(savedInstanceState);
-        Log.d("MainActivity", "✅ MainActivity onCreate - Plugin registered");
         
         // Enable edge-to-edge display
         setupEdgeToEdge();
