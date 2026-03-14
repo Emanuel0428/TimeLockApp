@@ -193,30 +193,6 @@ Ejemplo para añadir en `<head>`:
 Este landing page es parte del proyecto TimeLock.
 Desarrollado por ELO, CMM y AEO.
 
-## ✅ Checklist Pre-Lanzamiento
-
-Antes de publicar el landing page, asegúrate de:
-
-- [ ] Actualizar el enlace de Play Store en el botón "Descargar"
-- [ ] Agregar email de contacto en páginas legales
-- [ ] Subir screenshots de la app a `assets/screenshots/`
-- [ ] Generar y agregar favicons en `assets/icons/`
-- [ ] Probar todos los enlaces internos
-- [ ] Verificar responsive en diferentes dispositivos
-- [ ] Validar HTML en [W3C Validator](https://validator.w3.org/)
-- [ ] Optimizar todas las imágenes
-- [ ] Probar velocidad de carga en [PageSpeed Insights](https://pagespeed.web.dev/)
-- [ ] Configurar dominio personalizado (si aplica)
-- [ ] Agregar Google Analytics o herramienta de métricas (opcional)
-
-## 🚀 Próximos Pasos
-
-1. **Agregar Screenshots**: Captura pantallas de la app y colócalas en `assets/screenshots/`
-2. **Generar Favicons**: Usa [RealFaviconGenerator](https://realfavicongenerator.net/)
-3. **Configurar Dominio**: Apunta tu dominio al hosting elegido
-4. **SEO**: Agrega `sitemap.xml` y `robots.txt`
-5. **Analytics**: Configura seguimiento de visitantes (opcional)
-6. **Open Graph**: Agrega meta tags para redes sociales
 
 ## 📞 Soporte
 
@@ -224,4 +200,3 @@ Para preguntas sobre el landing page, contactar a los desarrolladores del proyec
 
 ---
 
-**Nota**: Recuerda actualizar los enlaces de Play Store y email de contacto antes del lanzamiento oficial.
