@@ -32,6 +32,7 @@ yarn.lock
 .capacitor
 
 # Android
+android/key.properties
 android/.idea
 android/.gradle
 android/build

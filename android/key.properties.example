@@ -1,0 +1,14 @@
+# Rename this file to key.properties and fill in your actual values.
+# NEVER commit key.properties to version control.
+#
+# To generate a new keystore, run:
+#   keytool -genkey -v -keystore timelockapp-release.jks -alias timelockapp -keyalg RSA -keysize 2048 -validity 10000
+#
+# storeFile: path to your .jks file, relative to android/app/ or use an absolute path
+# Example (relative):  ../timelockapp-release.jks
+# Example (absolute):  C:/Users/COD/keys/timelockapp-release.jks
+
+storeFile=../timelockapp-release.jks
+storePassword=YOUR_STORE_PASSWORD
+keyAlias=timelockapp
+keyPassword=YOUR_KEY_PASSWORD
