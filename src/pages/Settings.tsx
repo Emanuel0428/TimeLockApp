@@ -362,7 +362,7 @@ const Settings = () => {
                     <p className="text-xs text-[#94A3B8] leading-relaxed">
                       Entre las 22:00 y las 05:00, las apps y URLs de tu lista
                       de bloqueo nocturno quedarán restringidas. Sólo podrás
-                      acceder a ellas gastando Tokens de la Tienda.
+                      acceder a ellas gastando tokens de desbloqueo.
                     </p>
                     <div className="mt-4 pt-4 border-t border-white/10 flex justify-between items-center text-sm text-indigo-300">
                       <span>Inicio: 22:00</span>

@@ -332,6 +332,25 @@ export function MetricsProvider({ children }: { children: ReactNode }) {
     setTodayMetrics(getMetrics(getToday()));
   }, []);
 
+  // Keep token balance synced when rewards/spends happen outside this context.
+  useEffect(() => {
+    const onBalanceUpdate = () => {
+      setTokenBalance(getTokenBalance());
+    };
+
+    window.addEventListener(
+      "timelock:balance_update",
+      onBalanceUpdate as EventListener,
+    );
+
+    return () => {
+      window.removeEventListener(
+        "timelock:balance_update",
+        onBalanceUpdate as EventListener,
+      );
+    };
+  }, []);
+
   return (
     <MetricsContext.Provider
       value={{

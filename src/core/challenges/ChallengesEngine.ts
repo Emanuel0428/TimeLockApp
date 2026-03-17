@@ -1,8 +1,13 @@
-import { getMetrics, getToday } from "../../lib/storage";
+import { getMetrics, getToday, saveMetrics } from "../../lib/storage";
 import { storage } from "../storage/userStorage";
 import { TokenService } from "../tokens/TokenService";
 import { NotificationService } from "../notifications/NotificationService";
 import { defaultSettings, type SettingsModel } from "../models";
+
+interface ChallengeReward {
+  amount: number;
+  reason: string;
+}
 
 export class ChallengesEngine {
   /**
@@ -20,14 +25,15 @@ export class ChallengesEngine {
     if (!settings) return;
 
     const metrics = getMetrics(dateKey);
-    let earnedTokens = 0;
-    const reasons: string[] = [];
+    const rewards: ChallengeReward[] = [];
 
     // 1. Pickup Limit Challenge
     if (settings.challenges.pickupTimes) {
       if (metrics.pickups <= settings.pickupLimit) {
-        earnedTokens += 2;
-        reasons.push("Mantuviste tus recogidas de pantalla bajo el límite.");
+        rewards.push({
+          amount: 2,
+          reason: "Desafío completado: recogidas de pantalla bajo el límite",
+        });
       }
     }
 
@@ -35,8 +41,10 @@ export class ChallengesEngine {
     if (settings.challenges.continuousUse) {
       const maxMsAllowed = settings.continuousUseMaxHours * 3600 * 1000;
       if (metrics.continuousMaxMs <= maxMsAllowed) {
-        earnedTokens += 1;
-        reasons.push("No excediste el uso continuo máximo.");
+        rewards.push({
+          amount: 1,
+          reason: "Desafío completado: no excediste el uso continuo máximo",
+        });
       }
     }
 
@@ -45,17 +53,31 @@ export class ChallengesEngine {
       // In a real scenario, compare today vs average
       // For the prototype: just a dummy check if active < 5 hours
       if (metrics.screenActiveMs < 5 * 3600 * 1000) {
-        earnedTokens += 1;
-        reasons.push("Redujiste tu tiempo en pantalla.");
+        rewards.push({
+          amount: 1,
+          reason: "Desafío completado: redujiste tu tiempo en pantalla",
+        });
       }
     }
 
+    const earnedTokens = rewards.reduce((sum, reward) => sum + reward.amount, 0);
+
     if (earnedTokens > 0) {
-      TokenService.earnTokens(earnedTokens, "Recompensa de Desafíos Diarios");
+      for (const reward of rewards) {
+        TokenService.earnTokens(reward.amount, reward.reason);
+      }
+
+      // Persist challenge rewards in daily metrics to keep historical totals aligned.
+      metrics.tokens += earnedTokens;
+      saveMetrics(metrics);
+
+      const reasonsPreview = rewards
+        .map((r) => `• ${r.reason.replace("Desafío completado: ", "")}`)
+        .join("\n");
 
       NotificationService.send("¡Retos del día superados!", {
-        body: `Has ganado ${earnedTokens} tokens. ${reasons[0]}`,
-        type: "SYSTEM",
+        body: `Has ganado ${earnedTokens} token${earnedTokens === 1 ? "" : "s"}.\n${reasonsPreview}`,
+        type: "CHALLENGE",
       });
     }
 

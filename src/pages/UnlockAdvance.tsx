@@ -4,7 +4,6 @@ import {
   ChevronLeft,
   Unlock,
   Coins,
-  ShoppingBag,
   Clock,
   ShieldAlert,
 } from "lucide-react";
@@ -297,21 +296,6 @@ const UnlockAdvance = () => {
               </div>
             </div>
           </div>
-
-          <div className="flex items-center gap-4 my-6">
-            <div className="flex-1 h-px bg-white/10"></div>
-            <span className="text-xs text-[#94A3B8]">o</span>
-            <div className="flex-1 h-px bg-white/10"></div>
-          </div>
-
-          {/* Botón para comprar tokens */}
-          <button
-            onClick={() => navigate("/token-shop")}
-            className="w-full py-4 rounded-xl font-semibold text-white bg-linear-to-r from-[#4B6FA7] to-[#6B8FD7] hover:shadow-lg hover:shadow-[#4B6FA7]/30 active:scale-95 transition-all flex items-center justify-center gap-2"
-          >
-            <ShoppingBag className="w-5 h-5" />
-            Comprar Tokens
-          </button>
         </div>
       </main>
 

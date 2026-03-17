@@ -19,7 +19,7 @@ Aplicación móvil para Android desarrollada con React y Capacitor que ayuda a g
 
 ### Sistema de Tokens
 - Recompensas automáticas por buenos hábitos
-- Tienda de tokens con beneficios desbloqueables
+- Canje de tokens para desbloqueos temporales
 - Libro mayor con historial de transacciones
 - Balance en tiempo real con eventos de actualización
 
@@ -147,7 +147,7 @@ src/
 ├── pages/              # Páginas de la app
 │   ├── Home.tsx, Login.tsx, Register.tsx
 │   ├── Settings.tsx, Blocklists.tsx, Notifications.tsx
-│   ├── Focus.tsx, TokenShop.tsx
+│   ├── Focus.tsx
 │   ├── Pickups.tsx, AverageUse.tsx, ContinuousUse.tsx
 │   ├── WalkingUse.tsx, StationaryLife.tsx, UnlockAdvance.tsx
 │   └── PluginTest.tsx

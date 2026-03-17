@@ -194,28 +194,6 @@ function QuickAccess() {
                 </li>
                 <li>
                   <Link
-                    to="/token-shop"
-                    className="flex items-center gap-3 py-2.5 px-4 rounded-lg hover:bg-white/5 text-[#F8FAFC] transition-all group"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    <svg
-                      className="w-5 h-5 text-[#4B6FA7] group-hover:text-[#6B8FD7]"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      strokeWidth="2"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                      />
-                    </svg>
-                    <span>Tienda de Tokens</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
                     to="/notifications"
                     className="flex items-center gap-3 py-2.5 px-4 rounded-lg hover:bg-white/5 text-[#F8FAFC] transition-all group"
                     onClick={() => setMenuOpen(false)}

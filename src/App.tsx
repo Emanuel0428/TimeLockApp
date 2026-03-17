@@ -13,7 +13,6 @@ import WalkingUse from "./pages/WalkingUse";
 import StationaryLife from "./pages/StationaryLife";
 import UnlockAdvance from "./pages/UnlockAdvance";
 import ContinuousUse from "./pages/ContinuousUse";
-import TokenShop from "./pages/TokenShop";
 import Notifications from "./pages/Notifications";
 import PluginTest from "./pages/PluginTest";
 
@@ -33,7 +32,6 @@ function App() {
         <Route path="/stationary-life" element={<StationaryLife />} />
         <Route path="/unlock-advance" element={<UnlockAdvance />} />
         <Route path="/continuous-use" element={<ContinuousUse />} />
-        <Route path="/token-shop" element={<TokenShop />} />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/blocklists" element={<Blocklists />} />
         <Route path="/plugin-test" element={<PluginTest />} />
