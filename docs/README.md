@@ -12,11 +12,11 @@ landing/
 ├── assets/                         # Recursos estáticos
 │   ├── README.md                   # Guía de assets
 │   ├── images/                     # Imágenes generales
-│   │   └── README.md               
+│   │   └── README.md           
 │   ├── screenshots/                # Capturas de la app
-│   │   └── README.md               
+│   │   └── README.md           
 │   └── icons/                      # Favicons e iconos
-│       └── README.md               
+│       └── README.md           
 │
 ├── css/                            # Hojas de estilo
 │   ├── main.css                    # Estilos página principal
@@ -56,32 +56,7 @@ landing/
   - [Política de Privacidad](pages/privacidad.html)
 - **Assets**: [Guía de recursos](assets/README.md)
 
-## 🚀 Despliegue
-
-### Opciones de Hosting
-
-1. **GitHub Pages** (Recomendado)
-   ```bash
-   # Subir a GitHub y activar GitHub Pages en la carpeta landing/
-   ```
-
-2. **Netlify**
-   ```bash
-   # Conectar repositorio o arrastrar la carpeta landing/
-   ```
-
-3. **Vercel**
-   ```bash
-   vercel --prod
-   ```
-
-4. **Firebase Hosting**
-   ```bash
-   firebase init hosting
-   firebase deploy
-   ```
-
-### Servidor Local
+## Servidor Local
 
 Para probar localmente:
 
@@ -97,70 +72,6 @@ php -S localhost:8000
 ```
 
 Luego visitar: `http://localhost:8000`
-
-## 📝 Personalización
-
-### Actualizar Enlaces
-
-Antes de publicar, actualizar los siguientes enlaces:
-
-1. **index.html** - Línea del botón "Descargar en Play Store":
-   ```html
-   <a href="TU_ENLACE_DE_PLAY_STORE" class="btn btn-primary">
-   ```
-
-2. **terminos.html y privacidad.html** - Sección de contacto:
-   ```html
-   <li>Correo electrónico: [tu-email@ejemplo.com]</li>
-   ```
-
-### Agregar Screenshots
-
-Para mejorar el hero section, agregar screenshots de la app:
-
-1. Exportar screenshots desde el emulador o dispositivo
-2. Guardar las imágenes en `assets/images/`
-3. Optimizar las imágenes (recomendado: 300x600px)
-4. Reemplazar el placeholder en `index.html`:
-
-```html
-<div class="phone-screen">
-    <img src="assets/images/home.png" alt="TimeLock App">
-</div>
-```
-
-### Agregar Logo
-
-Para usar el logo SVG de la app:
-
-1. El logo ya está en `public/logoTimeLock-white.svg`
-2. Opcionalmente, copiar a `assets/images/` para mejor organización
-3. Actualizar referencias en HTML si se mueve
-
-## 🎯 SEO y Meta Tags
-
-La página incluye meta tags básicos. Considera agregar:
-
-- Open Graph tags para redes sociales
-- Twitter Cards
-- Schema.org markup
-- Favicon completo (múltiples tamaños)
-
-Ejemplo para añadir en `<head>`:
-
-```html
-<!-- Open Graph -->
-<meta property="og:title" content="TimeLock - Controla tu tiempo de pantalla">
-<meta property="og:description" content="Aplicación para gestionar tu tiempo digital...">
-<meta property="og:image" content="URL_DE_IMAGEN_PREVIEW">
-<meta property="og:url" content="TU_URL">
-
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="TimeLock">
-<meta name="twitter:description" content="Controla tu tiempo de pantalla...">
-<meta name="twitter:image" content="URL_DE_IMAGEN_PREVIEW">
-```
 
 ## 🔧 Tecnologías Utilizadas
 
@@ -193,10 +104,8 @@ Ejemplo para añadir en `<head>`:
 Este landing page es parte del proyecto TimeLock.
 Desarrollado por ELO, CMM y AEO.
 
-
 ## 📞 Soporte
 
 Para preguntas sobre el landing page, contactar a los desarrolladores del proyecto TimeLock.
 
 ---
-
